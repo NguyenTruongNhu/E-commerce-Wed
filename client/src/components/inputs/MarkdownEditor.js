@@ -1,5 +1,5 @@
-import React, { memo } from "react";
-import { Editor } from "@tinymce/tinymce-react";
+import React, { memo } from 'react'
+import { Editor } from '@tinymce/tinymce-react'
 
 const MartdownEditor = ({
   label,
@@ -8,6 +8,7 @@ const MartdownEditor = ({
   name,
   invalidFields,
   setInvalidFields,
+  setIsForcusDescription
 }) => {
   return (
     <div className="flex flex-col">
@@ -19,36 +20,38 @@ const MartdownEditor = ({
           height: 500,
           menubar: true,
           plugins: [
-            "advlist",
-            "autolink",
-            "lists",
-            "link",
-            "image",
-            "charmap",
-            "anchor",
-            "searchreplace",
-            "visualblocks",
-            "code",
-            "fullscreen",
-            "insertdatetime",
-            "media",
-            "table",
-            "preview",
-            "help",
-            "wordcount",
+            'advlist',
+            'autolink',
+            'lists',
+            'link',
+            'image',
+            'charmap',
+            'anchor',
+            'searchreplace',
+            'visualblocks',
+            'code',
+            'fullscreen',
+            'insertdatetime',
+            'media',
+            'table',
+            'preview',
+            'help',
+            'wordcount'
           ],
           toolbar:
-            "undo redo | blocks | " +
-            "bold italic forecolor | alignleft aligncenter " +
-            "alignright alignjustify | bullist numlist outdent indent | " +
-            "removeformat | help",
+            'undo redo | blocks | ' +
+            'bold italic forecolor | alignleft aligncenter ' +
+            'alignright alignjustify | bullist numlist outdent indent | ' +
+            'removeformat | help',
           content_style:
-            "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+            'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
         }}
         onChange={(e) =>
           changeValue((prev) => ({ ...prev, [name]: e.target.getContent() }))
         }
-        onFocus={() => setInvalidFields && setInvalidFields([])}
+        onFocus={() => {
+          setInvalidFields && setInvalidFields([])
+        }}
       />
       {invalidFields?.some((el) => el.name === name) && (
         <small className="text-main text-sm">
@@ -56,7 +59,7 @@ const MartdownEditor = ({
         </small>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default memo(MartdownEditor);
+export default memo(MartdownEditor)

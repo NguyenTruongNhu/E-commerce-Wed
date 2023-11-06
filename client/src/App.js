@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import React, { useEffect } from 'react'
+import { Routes, Route } from 'react-router-dom'
 import {
   Login,
   Home,
@@ -10,30 +10,30 @@ import {
   Blog,
   Products,
   FinalRegister,
-  ResetPassword,
-} from "pages/public";
+  ResetPassword
+} from 'pages/public'
 import {
   AdminLayout,
   ManageOrder,
   ManageProduct,
   ManageUser,
   CreateProduct,
-  Dashboard,
-} from "pages/admin";
-import { MemberLayout, Personal } from "pages/member";
-import path from "ultils/path";
-import { getCategories } from "store/app/asyncActions";
-import { useDispatch, useSelector } from "react-redux";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { Modal } from "components";
+  Dashboard
+} from 'pages/admin'
+import { MemberLayout, Personal, History, MyCart, Wishlist } from 'pages/member'
+import path from 'ultils/path'
+import { getCategories } from 'store/app/asyncActions'
+import { useDispatch, useSelector } from 'react-redux'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import { Modal } from 'components'
 
 function App() {
-  const dispatch = useDispatch();
-  const { isShowModal, modalChildren } = useSelector((state) => state.app);
+  const dispatch = useDispatch()
+  const { isShowModal, modalChildren } = useSelector((state) => state.app)
   useEffect(() => {
-    dispatch(getCategories());
-  }, []);
+    dispatch(getCategories())
+  }, [])
 
   return (
     <div className="font-main relative">
@@ -61,6 +61,9 @@ function App() {
         </Route>
         <Route path={path.MEMBER} element={<MemberLayout />}>
           <Route path={path.PERSONAL} element={<Personal />} />
+          <Route path={path.MY_CART} element={<MyCart id="cart" />} />
+          <Route path={path.WISHLIST} element={<Wishlist />} />
+          <Route path={path.HISTORY} element={<History />} />
         </Route>
         <Route path={path.FINAL_REGISTER} element={<FinalRegister />} />
         <Route path={path.LOGIN} element={<Login />} />
@@ -79,7 +82,7 @@ function App() {
       {/* Same as */}
       <ToastContainer />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

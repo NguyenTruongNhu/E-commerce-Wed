@@ -1,6 +1,7 @@
 const Product = require("../models/product");
 const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
+const makeSku = require("uniqid");
 
 const createProduct = asyncHandler(async (req, res) => {
   const { title, description, price, brand, category, color } = req.body;
@@ -14,7 +15,7 @@ const createProduct = asyncHandler(async (req, res) => {
   const newProduct = await Product.create(req.body);
   return res.status(200).json({
     success: newProduct ? true : false,
-    createdProduct: newProduct ? newProduct : "Cannot create new product",
+    mes: newProduct ? "Created" : "Failed.",
   });
 });
 const getProduct = asyncHandler(async (req, res) => {
@@ -47,23 +48,38 @@ const getProducts = asyncHandler(async (req, res) => {
   const formatedQueries = JSON.parse(queryString);
   let colorQueryObject = {};
   //Filtering
-  if (queries?.title) {
-    formatedQueries.title = { $regex: queries.title, $options: "i" };
-  }
-  if (queries?.category) {
-    formatedQueries.category = { $regex: queries.category, $options: "i" };
-  }
-  if (queries?.color) {
-    delete formatedQueries.color;
-    const colorArr = queries.color?.split(",");
-    const colorQuery = colorArr.map((el) => ({
-      color: { $regex: el, $options: "i" },
-    }));
-    colorQueryObject = { $or: colorQuery };
-  }
-  const q = { ...colorQueryObject, ...formatedQueries };
+  // if (queries?.title) {
+  //   formatedQueries.title = { $regex: queries.title, $options: "i" };
+  // }
+  // if (queries?.category) {
+  //   formatedQueries.category = { $regex: queries.category, $options: "i" };
+  // }
+  // if (queries?.color) {
+  //   delete formatedQueries.color;
+  //   const colorArr = queries.color?.split(",");
+  //   const colorQuery = colorArr.map((el) => ({
+  //     color: { $regex: el, $options: "i" },
+  //   }));
+  //   colorQueryObject = { $or: colorQuery };
+  // }
 
-  let queryCommand = Product.find(q);
+  let queryObject = {};
+  if (queries?.q) {
+    delete formatedQueries.q;
+    queryObject = {
+      $or: [
+        { color: { $regex: queries.q, $options: "i" } },
+        { title: { $regex: queries.q, $options: "i" } },
+        { category: { $regex: queries.q, $options: "i" } },
+        { brand: { $regex: queries.q, $options: "i" } },
+        { description: { $regex: queries.q, $options: "i" } },
+      ],
+    };
+  }
+
+  const qr = { ...colorQueryObject, ...formatedQueries, ...queryObject };
+
+  let queryCommand = Product.find(qr);
 
   //Sorting
   if (req.query.sort) {
@@ -84,7 +100,7 @@ const getProducts = asyncHandler(async (req, res) => {
   //Excute query
   queryCommand.exec(async (err, response) => {
     if (err) throw new Error(err.message);
-    const counts = await Product.find(q).countDocuments();
+    const counts = await Product.find(qr).countDocuments();
     return res.status(200).json({
       success: response ? true : false,
       counts,
@@ -95,13 +111,17 @@ const getProducts = asyncHandler(async (req, res) => {
 
 const updateProduct = asyncHandler(async (req, res) => {
   const { pid } = req.params;
+  const files = req?.files;
+  if (files?.thumb) req.body.thumb = files?.thumb[0]?.path;
+  if (files?.images) req.body.images = files?.images?.map((el) => el.path);
+
   if (req.body && req.body.title) req.body.slug = slugify(req.body.title);
   const updatedProduct = await Product.findByIdAndUpdate(pid, req.body, {
     new: true,
   });
   return res.status(200).json({
     success: updatedProduct ? true : false,
-    updatedProduct: updatedProduct ? updatedProduct : "Can not update product",
+    mes: updatedProduct ? "Updated." : "Can not update product",
   });
 });
 const deleteProduct = asyncHandler(async (req, res) => {
@@ -109,7 +129,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
   const deletedProduct = await Product.findByIdAndDelete(pid);
   return res.status(200).json({
     success: deletedProduct ? true : false,
-    deletedProduct: deletedProduct ? deletedProduct : "Can not delete product",
+    mes: deletedProduct ? "Deleted." : "Can not delete product",
   });
 });
 
@@ -160,7 +180,7 @@ const ratings = asyncHandler(async (req, res) => {
   await updatedProduct.save();
 
   return res.status(200).json({
-    status: true,
+    success: true,
     updatedProduct,
   });
 });
@@ -176,8 +196,35 @@ const uploadImagesProduct = asyncHandler(async (req, res) => {
     { new: true }
   );
   return res.status(200).json({
-    status: response ? true : false,
+    success: response ? true : false,
     updatedProduct: response ? response : "Cannot upload images product",
+  });
+});
+const addVariant = asyncHandler(async (req, res) => {
+  const { pid } = req.params;
+  const { title, price, color } = req.body;
+  const thumb = req?.files?.thumb[0]?.path;
+  const images = req.files?.images?.map((el) => el.path);
+  if (!(title && price && color)) throw new Error("Missing inputs");
+  const response = await Product.findByIdAndUpdate(
+    pid,
+    {
+      $push: {
+        variants: {
+          color,
+          price,
+          title,
+          thumb,
+          images,
+          sku: makeSku().toUpperCase(),
+        },
+      },
+    },
+    { new: true }
+  );
+  return res.status(200).json({
+    success: response ? true : false,
+    mes: response ? "Added variant" : "Cannot add variant",
   });
 });
 
@@ -189,4 +236,5 @@ module.exports = {
   deleteProduct,
   ratings,
   uploadImagesProduct,
+  addVariant,
 };

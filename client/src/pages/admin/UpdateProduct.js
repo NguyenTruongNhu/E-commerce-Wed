@@ -1,13 +1,13 @@
-import React, { useCallback, useState, useEffect } from 'react'
+import React, { memo, useState, useCallback, useEffect } from 'react'
 import { InputForm, Select, Button, MartdownEditor, Loading } from 'components'
 import { useForm } from 'react-hook-form'
-import { useSelector, useDispatch } from 'react-redux'
 import { validate, getBase64 } from 'ultils/helper'
+import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
-import { apiCreateProduct } from 'apis'
+import { apiCreateProduct, apiUpdateProduct } from 'apis'
 import { showModal } from 'store/app/appSlice'
 
-const CreateProduct = () => {
+const UpdateProduct = ({ editProduct, render, setEditProduct }) => {
   const { categories } = useSelector((state) => state.app)
   const dispatch = useDispatch()
   const {
@@ -25,7 +25,27 @@ const CreateProduct = () => {
     thumb: null,
     images: []
   })
-  const [hoverElm, setHoverElm] = useState(null)
+
+  useEffect(() => {
+    reset({
+      title: editProduct?.title || '',
+      price: editProduct?.price || '',
+      quantity: editProduct?.quantity || '',
+      color: editProduct?.color || '',
+      category: editProduct?.category || '',
+      brand: editProduct?.brand?.toLowerCase() || ''
+    })
+    setPayload({
+      description:
+        typeof editProduct?.description === 'object'
+          ? editProduct?.description?.join(', ')
+          : editProduct?.description
+    })
+    setPreview({
+      thumb: editProduct?.thumb || '',
+      images: editProduct?.images || []
+    })
+  }, [editProduct])
   const [invalidFields, setInvalidFields] = useState([])
   const changeValue = useCallback(
     (e) => {
@@ -33,7 +53,6 @@ const CreateProduct = () => {
     },
     [payload]
   )
-
   const handlePreviewThumb = async (file) => {
     const base64Thumb = await getBase64(file)
     setPreview((prev) => ({ ...prev, thumb: base64Thumb }))
@@ -46,39 +65,47 @@ const CreateProduct = () => {
         return
       }
       const base64 = await getBase64(file)
-      imagesPreview.push({ name: file.name, path: base64 })
+      imagesPreview.push(base64)
     }
     if (imagesPreview.length > 0)
       setPreview((prev) => ({ ...prev, images: imagesPreview }))
   }
   useEffect(() => {
-    handlePreviewThumb(watch('thumb')[0])
+    if (watch('thumb') instanceof FileList && watch('thumb').length > 0) {
+      handlePreviewThumb(watch('thumb')[0])
+    }
   }, [watch('thumb')])
   useEffect(() => {
-    handlePreviewImages(watch('images'))
+    if (watch('images') instanceof FileList && watch('images').length > 0) {
+      handlePreviewImages(watch('images'))
+    }
   }, [watch('images')])
 
-  const handleCreateProduct = async (data) => {
+  const handleUpdateProduct = async (data) => {
     const invalids = validate(payload, setInvalidFields)
     if (invalids === 0) {
       if (data.category)
         data.category = categories?.find(
-          (el) => el._id === data.category
+          (el) => el.title === data.category
         )?.title
+
       const finalPayload = { ...data, ...payload }
+      finalPayload.thumb =
+        data?.thumb?.length === 0 ? preview.thumb : data.thumb[0]
+
       const formData = new FormData()
       for (let i of Object.entries(finalPayload)) formData.append(i[0], i[1])
-
-      if (finalPayload.thumb) formData.append('thumb', finalPayload.thumb[0])
-      if (finalPayload.images) {
-        for (let image of finalPayload.images) formData.append('images', image)
-      }
+      finalPayload.images =
+        data?.images?.length === 0 ? preview.images : data.images
+      for (let image of finalPayload.images) formData.append('images', image)
       dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }))
-      const response = await apiCreateProduct(formData)
+      const response = await apiUpdateProduct(formData, editProduct._id)
       dispatch(showModal({ isShowModal: false, modalChildren: null }))
+
       if (response.success) {
         toast.success(response.mes)
-        reset()
+        render()
+        setEditProduct(null)
         setPayload({
           thumb: '',
           images: []
@@ -88,26 +115,20 @@ const CreateProduct = () => {
       }
     }
   }
-
-  // const handleRemoveImage = (name) => {
-  //   const files = [...watch("images")];
-  //   reset({
-  //     images: files?.filter((el) => el.name !== name),
-  //   });
-  //   if (preview.images?.some((el) => el.name === name))
-  //     setPreview((prev) => ({
-  //       ...prev,
-  //       images: prev.images?.filter((el) => el.name !== name),
-  //     }));
-  // };
-
   return (
-    <div className="w-full">
-      <h1 className="h-[75px] flex justify-between items-center text-3xl font-bold border-b px-4">
-        <span>Create New Product</span>
-      </h1>
+    <div className="w-full  flex flex-col gap-4 relative">
+      <div className="h-[69px] w-full"></div>
+      <div className="p-4 border-b flex bg-gray-100 justify-between items-center right-0 left-[327px] fixed top-0">
+        <h1 className="text-3xl font-bold tracking-tight">Update products</h1>
+        <span
+          className="text-main hover:underline cursor-pointer"
+          onClick={() => setEditProduct(null)}
+        >
+          Cancel
+        </span>
+      </div>
       <div className="p-4">
-        <form onSubmit={handleSubmit(handleCreateProduct)}>
+        <form onSubmit={handleSubmit(handleUpdateProduct)}>
           <InputForm
             label="Name Product"
             register={register}
@@ -162,7 +183,7 @@ const CreateProduct = () => {
             <Select
               label="Category"
               options={categories?.map((el) => ({
-                code: el._id,
+                code: el.title,
                 value: el.title
               }))}
               register={register}
@@ -177,8 +198,8 @@ const CreateProduct = () => {
             <Select
               label="Brand (Optional)"
               options={categories
-                ?.find((el) => el._id === watch('category'))
-                ?.brand?.map((el) => ({ code: el, value: el }))}
+                ?.find((el) => el.title === watch('category'))
+                ?.brand?.map((el) => ({ code: el.toLowerCase(), value: el }))}
               register={register}
               id="brand"
               style="flex-auto"
@@ -192,16 +213,13 @@ const CreateProduct = () => {
             label="Description"
             invalidFields={invalidFields}
             setInvalidFields={setInvalidFields}
+            value={payload.description}
           />
           <div className="flex flex-col gap-2 mt-8">
             <label className="font-semibold" htmlFor="thumb">
               Upload thumb
             </label>
-            <input
-              type="file"
-              id="thumb"
-              {...register('thumb', { required: 'Need fill' })}
-            />
+            <input type="file" id="thumb" {...register('thumb')} />
             {errors['thumb'] && (
               <small className="text-xs text-red-500 italic">
                 {errors['thumb']?.message}
@@ -221,12 +239,7 @@ const CreateProduct = () => {
             <label className="font-semibold" htmlFor="products">
               Upload images of product
             </label>
-            <input
-              type="file"
-              id="products"
-              {...register('images', { required: 'Need fill' })}
-              multiple
-            />
+            <input type="file" id="products" {...register('images')} multiple />
             {errors['images'] && (
               <small className="text-xs text-red-500 italic">
                 {errors['images']?.message}
@@ -238,7 +251,7 @@ const CreateProduct = () => {
               {preview.images?.map((el, index) => (
                 <div key={index} className="w-fit relative">
                   <img
-                    src={el.path}
+                    src={el}
                     alt="products"
                     className="w-[200px] object-contain"
                   />
@@ -247,7 +260,7 @@ const CreateProduct = () => {
             </div>
           )}
           <div className="my-8">
-            <Button type="submit">Create new product</Button>
+            <Button type="submit">Update new product</Button>
           </div>
         </form>
       </div>
@@ -255,4 +268,4 @@ const CreateProduct = () => {
   )
 }
 
-export default CreateProduct
+export default memo(UpdateProduct)

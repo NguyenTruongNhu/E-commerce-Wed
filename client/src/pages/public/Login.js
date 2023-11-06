@@ -1,100 +1,100 @@
-import React, { useState, useCallback } from "react";
-import { InputField, Button, Loading } from "components";
+import React, { useState, useCallback } from 'react'
+import { InputField, Button, Loading } from 'components'
 import {
   apiRegister,
   apiLogin,
   apiForgotPassword,
-  apiFinalRegister,
-} from "apis/user";
-import Swal from "sweetalert2";
-import { useNavigate, Link } from "react-router-dom";
-import path from "ultils/path";
-import { login } from "store/user/userSlice";
-import { showModal } from "store/app/appSlice";
-import { useDispatch } from "react-redux";
-import { toast } from "react-toastify";
-import { validate } from "ultils/helper";
+  apiFinalRegister
+} from 'apis/user'
+import Swal from 'sweetalert2'
+import { useNavigate, Link } from 'react-router-dom'
+import path from 'ultils/path'
+import { login } from 'store/user/userSlice'
+import { showModal } from 'store/app/appSlice'
+import { useDispatch } from 'react-redux'
+import { toast } from 'react-toastify'
+import { validate } from 'ultils/helper'
 const Login = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [payload, setPayload] = useState({
-    email: "",
-    password: "",
-    firstname: "",
-    lastname: "",
-    mobile: "",
-  });
-  const [isVerifiedEmail, setIsVerifiedEmail] = useState(false);
-  const [invalidFields, setInvalidFields] = useState([]);
-  const [isRegister, setIsRegister] = useState(false);
-  const [isForgotPassword, setIsForgotPassword] = useState(false);
+    email: '',
+    password: '',
+    firstname: '',
+    lastname: '',
+    mobile: ''
+  })
+  const [isVerifiedEmail, setIsVerifiedEmail] = useState(false)
+  const [invalidFields, setInvalidFields] = useState([])
+  const [isRegister, setIsRegister] = useState(false)
+  const [isForgotPassword, setIsForgotPassword] = useState(false)
   const resetPayload = () => {
     setPayload({
-      email: "",
-      password: "",
-      firstname: "",
-      lastname: "",
-      mobile: "",
-    });
-  };
-  const [token, setToken] = useState("");
-  const [email, setEmail] = useState("");
+      email: '',
+      password: '',
+      firstname: '',
+      lastname: '',
+      mobile: ''
+    })
+  }
+  const [token, setToken] = useState('')
+  const [email, setEmail] = useState('')
   const handleForgotPassword = async () => {
-    const response = await apiForgotPassword({ email });
+    const response = await apiForgotPassword({ email })
     if (response.success) {
-      toast.success(response.mes, { theme: "colored" });
+      toast.success(response.mes, { theme: 'colored' })
     } else {
-      toast.info(response.mes, { theme: "colored" });
+      toast.info(response.mes, { theme: 'colored' })
     }
-  };
+  }
 
   const handleSubmit = useCallback(async () => {
-    const { firstname, lastname, mobile, ...data } = payload;
+    const { firstname, lastname, mobile, ...data } = payload
 
     const invalids = isRegister
       ? validate(payload, setInvalidFields)
-      : validate(data, setInvalidFields);
+      : validate(data, setInvalidFields)
     if (invalids === 0) {
       if (isRegister) {
-        dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
-        const response = await apiRegister(payload);
-        dispatch(showModal({ isShowModal: false, modalChildren: null }));
+        dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }))
+        const response = await apiRegister(payload)
+        dispatch(showModal({ isShowModal: false, modalChildren: null }))
         if (response.success) {
-          setIsVerifiedEmail(true);
+          setIsVerifiedEmail(true)
         } else {
-          Swal.fire("Opps!", response.mes, "error");
+          Swal.fire('Opps!', response.mes, 'error')
         }
       } else {
-        const rs = await apiLogin(data);
+        const rs = await apiLogin(data)
         if (rs.success) {
           dispatch(
             login({
               isLoggedIn: true,
               token: rs.accessToken,
-              userData: rs.userData,
+              userData: rs.userData
             })
-          );
-          navigate(`/${path.HOME}`);
+          )
+          navigate(`/${path.HOME}`)
         } else {
-          Swal.fire("Opps!", rs.mes, "error");
+          Swal.fire('Opps!', rs.mes, 'error')
         }
       }
     }
-  }, [isRegister, payload]);
+  }, [isRegister, payload])
 
   const finalRegister = async () => {
-    const response = await apiFinalRegister(token);
+    const response = await apiFinalRegister(token)
     if (response.success) {
-      Swal.fire("Congratulation", response.mes, "success").then(() => {
-        setIsRegister(false);
-        resetPayload();
-      });
+      Swal.fire('Congratulation', response.mes, 'success').then(() => {
+        setIsRegister(false)
+        resetPayload()
+      })
     } else {
-      Swal.fire("Opps!", response.mes, "error");
+      Swal.fire('Opps!', response.mes, 'error')
     }
-    setIsVerifiedEmail(false);
-    setToken("");
-  };
+    setIsVerifiedEmail(false)
+    setToken('')
+  }
 
   return (
     <div className="w-screen h-screen relative">
@@ -153,7 +153,7 @@ const Login = () => {
       <div className="absolute top-0 bottom-0 left-0 right-1/2 flex items-center justify-center">
         <div className="p-8 bg-white flex flex-col items-center rounded-md min-w-[500px] ">
           <h1 className="text-[28px] font-semibold text-main mb-8 ">
-            {isRegister ? "Register" : "Login"}
+            {isRegister ? 'Register' : 'Login'}
           </h1>
           {isRegister && (
             <div className="flex items-center gap-2">
@@ -176,6 +176,7 @@ const Login = () => {
           <InputField
             value={payload.email}
             setValue={setPayload}
+            fullWidth
             nameKey="email"
             invalidFields={invalidFields}
             setInvalidFields={setInvalidFields}
@@ -184,6 +185,7 @@ const Login = () => {
             <InputField
               value={payload.mobile}
               setValue={setPayload}
+              fullWidth
               nameKey="mobile"
               invalidFields={invalidFields}
               setInvalidFields={setInvalidFields}
@@ -192,6 +194,7 @@ const Login = () => {
           <InputField
             value={payload.password}
             setValue={setPayload}
+            fullWidth
             nameKey="password"
             type="password"
             invalidFields={invalidFields}
@@ -199,7 +202,7 @@ const Login = () => {
           />
 
           <Button handleOnclick={handleSubmit} fw>
-            {isRegister ? "Register" : "Login"}
+            {isRegister ? 'Register' : 'Login'}
           </Button>
 
           <div className="flex items-center justify-between my-2 w-full text-sm">
@@ -237,7 +240,7 @@ const Login = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login
