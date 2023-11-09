@@ -4,17 +4,17 @@ import {
   BestSeller,
   FeatureProduct,
   CustomSlider,
-  DealDaily,
-} from "../../components";
-import { useSelector } from "react-redux";
-import icons from "../../ultils/icons";
+  DealDaily
+} from '../../components'
+import { useSelector } from 'react-redux'
+import icons from '../../ultils/icons'
 
-const { IoIosArrowForward } = icons;
+const { IoIosArrowForward } = icons
 
 const Home = () => {
-  const { newProducts } = useSelector((state) => state.products);
-  const { categories } = useSelector((state) => state.app);
-  const { isLoggedIn, current } = useSelector((state) => state.user);
+  const { newProducts } = useSelector((state) => state.products)
+  const { categories } = useSelector((state) => state.app)
+  const { isLoggedIn, current } = useSelector((state) => state.user)
   return (
     <>
       <div className="w-main flex mt-6">
@@ -78,7 +78,7 @@ const Home = () => {
         </h3>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

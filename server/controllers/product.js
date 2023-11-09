@@ -47,21 +47,20 @@ const getProducts = asyncHandler(async (req, res) => {
   );
   const formatedQueries = JSON.parse(queryString);
   let colorQueryObject = {};
-  //Filtering
-  // if (queries?.title) {
-  //   formatedQueries.title = { $regex: queries.title, $options: "i" };
-  // }
-  // if (queries?.category) {
-  //   formatedQueries.category = { $regex: queries.category, $options: "i" };
-  // }
-  // if (queries?.color) {
-  //   delete formatedQueries.color;
-  //   const colorArr = queries.color?.split(",");
-  //   const colorQuery = colorArr.map((el) => ({
-  //     color: { $regex: el, $options: "i" },
-  //   }));
-  //   colorQueryObject = { $or: colorQuery };
-  // }
+  if (queries?.title) {
+    formatedQueries.title = { $regex: queries.title, $options: "i" };
+  }
+  if (queries?.category) {
+    formatedQueries.category = { $regex: queries.category, $options: "i" };
+  }
+  if (queries?.color) {
+    delete formatedQueries.color;
+    const colorArr = queries.color?.split(",");
+    const colorQuery = colorArr.map((el) => ({
+      color: { $regex: el, $options: "i" },
+    }));
+    colorQueryObject = { $or: colorQuery };
+  }
 
   let queryObject = {};
   if (queries?.q) {

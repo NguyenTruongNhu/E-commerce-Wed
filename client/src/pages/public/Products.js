@@ -1,89 +1,87 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from 'react'
 import {
   useParams,
   useSearchParams,
   useNavigate,
-  createSearchParams,
-} from "react-router-dom";
+  createSearchParams
+} from 'react-router-dom'
 import {
   Breadcrumb,
   Product,
   SearchItem,
   InputSelect,
-  Pagination,
-} from "../../components";
-import { apiGetProducts } from "../../apis";
-import Masonry from "react-masonry-css";
-import { sorts } from "../../ultils/contants";
+  Pagination
+} from '../../components'
+import { apiGetProducts } from '../../apis'
+import Masonry from 'react-masonry-css'
+import { sorts } from '../../ultils/contants'
 
 const breakpointColumnsObj = {
   default: 4,
   1100: 3,
   700: 2,
-  500: 1,
-};
+  500: 1
+}
 
 const Products = () => {
-  const { category } = useParams();
-  const [products, setProducts] = useState(null);
-  const [activeClick, setActiveClick] = useState(null);
-  const [params] = useSearchParams();
-  const [sort, setSort] = useState("");
-  const navigate = useNavigate();
+  const [products, setProducts] = useState(null)
+  const [activeClick, setActiveClick] = useState(null)
+  const [params] = useSearchParams()
+  const [sort, setSort] = useState('')
+  const navigate = useNavigate()
+  const { category } = useParams()
 
   const fetchProductsByCategory = async (queries) => {
-    const response = await apiGetProducts(queries);
-    if (response.success) setProducts(response);
-  };
+    if (category && category !== 'products') queries.category = category
+    const response = await apiGetProducts(queries)
+    if (response.success) setProducts(response)
+  }
   useEffect(() => {
-    const queries = Object.fromEntries([...params]);
-    let priceQuery = {};
+    const queries = Object.fromEntries([...params])
+    let priceQuery = {}
     if (queries.to && queries.from) {
       priceQuery = {
-        $and: [
-          { price: { gte: queries.from } },
-          { price: { lte: queries.to } },
-        ],
-      };
-      delete queries.price;
+        $and: [{ price: { gte: queries.from } }, { price: { lte: queries.to } }]
+      }
+      delete queries.price
     } else {
       if (queries.from) {
-        queries.price = { gte: queries.from };
+        queries.price = { gte: queries.from }
       }
       if (queries.to) {
-        queries.price = { lte: queries.to };
+        queries.price = { lte: queries.to }
       }
     }
 
-    delete queries.from;
-    delete queries.to;
+    delete queries.from
+    delete queries.to
 
-    const q = { ...priceQuery, ...queries };
-    fetchProductsByCategory(q);
-    window.scrollTo(0, 0);
-  }, [params]);
+    const q = { ...priceQuery, ...queries }
+    fetchProductsByCategory(q)
+    window.scrollTo(0, 0)
+  }, [params])
 
   const changeActiveFilter = useCallback(
     (name) => {
-      if (activeClick === name) setActiveClick(null);
-      else setActiveClick(name);
+      if (activeClick === name) setActiveClick(null)
+      else setActiveClick(name)
     },
     [activeClick]
-  );
+  )
   const changeValue = useCallback(
     (value) => {
-      setSort(value);
+      setSort(value)
     },
     [sort]
-  );
+  )
   useEffect(() => {
     if (sort) {
       navigate({
         pathname: `/${category}`,
-        search: createSearchParams({ sort }).toString(),
-      });
+        search: createSearchParams({ sort }).toString()
+      })
     }
-  }, [sort]);
+  }, [sort])
   return (
     <div className="w-full">
       <div className="h-[81px] flex justify-center items-center bg-gray-100">
@@ -137,7 +135,7 @@ const Products = () => {
       </div>
       <div className="w-full h-[500px]"></div>
     </div>
-  );
-};
+  )
+}
 
-export default Products;
+export default Products

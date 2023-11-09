@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import { useParams } from 'react-router-dom'
-import { apiGetProduct, apiGetProducts } from '../../apis'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
+import { createSearchParams, useParams } from 'react-router-dom'
+import { apiGetProduct, apiGetProducts, apiUpdateCart } from '../../apis'
 import {
   Breadcrumb,
   Button,
@@ -19,6 +19,12 @@ import {
 import { productExtraInfomation } from '../../ultils/contants'
 import DOMPurify from 'dompurify'
 import clsx from 'clsx'
+import { useSelector } from 'react-redux'
+import { getCurrent } from 'store/user/asyncActions'
+import { toast } from 'react-toastify'
+import Swal from 'sweetalert2'
+import withBaseComponent from 'hocs/withBaseComponent'
+import path from 'ultils/path'
 
 const settings = {
   dots: false,
@@ -28,14 +34,18 @@ const settings = {
   slidesToScroll: 1
 }
 
-const DetailProduct = () => {
-  const { pid, title, category } = useParams()
+const DetailProduct = ({ isQuickView, data, navigate, location, dispatch }) => {
+  const params = useParams()
+  const titleRef = useRef()
+  const { current } = useSelector((state) => state.user)
   const [product, setProduct] = useState(null)
   const [quantity, setQuantity] = useState(1)
   const [currentImage, setCurrentImage] = useState(null)
   const [relatedProducts, setRelatedProducts] = useState(null)
   const [update, setUpdate] = useState(false)
   const [variant, setVariant] = useState(null)
+  const [category, setCategory] = useState(null)
+  const [pid, setPid] = useState(null)
   const [currentProduct, setCurrentProduct] = useState({
     title: '',
     thumb: '',
@@ -43,6 +53,16 @@ const DetailProduct = () => {
     price: '',
     color: ''
   })
+
+  useEffect(() => {
+    if (data) {
+      setPid(data.pid)
+      setCategory(data.category)
+    } else if (params && params.pid) {
+      setPid(params.pid)
+      setCategory(params.category)
+    }
+  }, [data, params])
   const fetchProductData = async () => {
     const response = await apiGetProduct(pid)
     if (response.success) {
@@ -60,8 +80,16 @@ const DetailProduct = () => {
         images: product?.variants?.find((el) => el.sku === variant)?.images,
         thumb: product?.variants?.find((el) => el.sku === variant)?.thumb
       })
+    } else {
+      setCurrentProduct({
+        title: product?.title,
+        color: product?.color,
+        price: product?.price,
+        images: product?.images || [],
+        thumb: product?.thumb
+      })
     }
-  }, [variant])
+  }, [variant, product])
 
   const fetchProducts = async () => {
     const response = await apiGetProducts({ category })
@@ -73,6 +101,7 @@ const DetailProduct = () => {
       fetchProducts()
     }
     window.scrollTo(0, 0)
+    titleRef.current.scrollIntoView({ blocck: 'start' })
   }, [pid])
   useEffect(() => {
     if (pid) {
@@ -107,22 +136,64 @@ const DetailProduct = () => {
     e.stopPropagation()
     setCurrentImage(el)
   }
-
+  const handleAddToCart = async () => {
+    if (!current)
+      return Swal.fire({
+        title: 'Almost...',
+        text: 'Please login first!',
+        icon: 'info',
+        cancelButtonText: 'Not now!',
+        showCancelButton: true,
+        confirmButtonText: 'Go login page'
+      }).then((rs) => {
+        if (rs.isConfirmed)
+          navigate({
+            pathname: `/${path.LOGIN}`,
+            search: createSearchParams({
+              redirect: location.pathname
+            }).toString()
+          })
+      })
+    const response = await apiUpdateCart({
+      pid,
+      color: currentProduct.color || product?.color,
+      quantity,
+      price: currentProduct.price || product?.price,
+      thumbnail: currentProduct.thumb || product?.thumb,
+      title: currentProduct.title || product?.title
+    })
+    if (response.success) {
+      toast.success(response.mes)
+      dispatch(getCurrent())
+    } else toast.error(response.mes)
+  }
   return (
-    <div className="w-full">
-      <div className="h-[81px] flex justify-center items-center bg-gray-100">
-        <div className="w-main">
-          <h3 className="font-semibold">
-            {currentProduct.title || product?.title}
-          </h3>
-          <Breadcrumb
-            title={currentProduct.title || product?.title}
-            category={category}
-          />
+    <div className={clsx('w-full')}>
+      {!isQuickView && (
+        <div className="h-[81px] flex justify-center items-center bg-gray-100">
+          <div ref={titleRef} className="w-main">
+            <h3 className="font-semibold">
+              {currentProduct.title || product?.title}
+            </h3>
+            <Breadcrumb
+              title={currentProduct.title || product?.title}
+              category={category}
+            />
+          </div>
         </div>
-      </div>
-      <div className="w-main m-auto mt-4 flex">
-        <div className=" flex flex-col gap-4 w-2/5">
+      )}
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className={clsx(
+          ' bg-white m-auto mt-4 flex',
+          isQuickView
+            ? 'max-w-[900px] gap-[10rem] p-8 max-h-[80vh] overflow-y-auto'
+            : 'w-main'
+        )}
+      >
+        <div
+          className={clsx('flex flex-col gap-4 w-2/5', isQuickView && 'w-1/2')}
+        >
           <div className="h-[458px] w-[458px] border flex items-center overflow-hidden">
             <ReactImageMagnify
               {...{
@@ -166,7 +237,12 @@ const DetailProduct = () => {
             </Slider>
           </div>
         </div>
-        <div className=" pr-[24px] w-2/5 flex flex-col gap-4">
+        <div
+          className={clsx(
+            ' pr-[24px] w-2/5 flex flex-col gap-4',
+            isQuickView && 'w-1/2'
+          )}
+        >
           <div className="flex items-center justify-between">
             <h2 className="text-[30px] font-semibold">{`${formatMoney(
               formatPrice(currentProduct.price || product?.price)
@@ -217,6 +293,7 @@ const DetailProduct = () => {
               </div>
               {product?.variants?.map((el) => (
                 <div
+                  key={el.sku}
                   onClick={() => setVariant(el.sku)}
                   className={clsx(
                     'flex items-center gap-2 p-2 border cursor-pointer',
@@ -245,40 +322,50 @@ const DetailProduct = () => {
                 handleChangeQuantity={handleChangeQuantity}
               />
             </div>
-            <Button fw>Add to Cart</Button>
+            <Button handleOnclick={handleAddToCart} fw>
+              Add to Cart
+            </Button>
           </div>
         </div>
-        <div className="  w-1/5">
-          {productExtraInfomation.map((el) => (
-            <ProductExtraInfoItem
-              key={el.id}
-              title={el.title}
-              icon={el.icon}
-              sub={el.sub}
-            />
-          ))}
+        {!isQuickView && (
+          <div className="  w-1/5">
+            {productExtraInfomation.map((el) => (
+              <ProductExtraInfoItem
+                key={el.id}
+                title={el.title}
+                icon={el.icon}
+                sub={el.sub}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+      {!isQuickView && (
+        <div className="w-main m-auto mt-8">
+          <ProductInfomation
+            totalRatings={product?.totalRatings}
+            ratings={product?.ratings}
+            nameProduct={product?.title}
+            pid={product?._id}
+            rerender={rerender}
+          />
         </div>
-      </div>
-      <div className="w-main m-auto mt-8">
-        <ProductInfomation
-          totalRatings={product?.totalRatings}
-          ratings={product?.ratings}
-          nameProduct={product?.title}
-          pid={product?._id}
-          rerender={rerender}
-        />
-      </div>
-      <div className="w-main m-auto mt-8">
-        <h3 className="text-[20px] font-semibold py-[15px] border-b-2 border-main mb-8">
-          OTHER CUSTOMERS ALSO BUY:
-        </h3>
+      )}
+      {!isQuickView && (
+        <>
+          <div className="w-main m-auto mt-8">
+            <h3 className="text-[20px] font-semibold py-[15px] border-b-2 border-main mb-8">
+              OTHER CUSTOMERS ALSO BUY:
+            </h3>
 
-        <CustomSlider normal={true} products={relatedProducts} />
-      </div>
+            <CustomSlider normal={true} products={relatedProducts} />
+          </div>
 
-      <div className="h-[100px] w-full"></div>
+          <div className="h-[100px] w-full"></div>
+        </>
+      )}
     </div>
   )
 }
 
-export default DetailProduct
+export default withBaseComponent(DetailProduct)

@@ -1,14 +1,14 @@
-import React, { memo } from "react";
-import { Product } from "components";
-import Slider from "react-slick";
+import React, { memo } from 'react'
+import { Product } from 'components'
+import Slider from 'react-slick'
 
 const settings = {
   dots: false,
   infinite: false,
   speed: 500,
   slidesToShow: 3,
-  slidesToScroll: 1,
-};
+  slidesToScroll: 1
+}
 
 const CustomSlider = ({ products, activedTab, normal }) => {
   return (
@@ -29,7 +29,7 @@ const CustomSlider = ({ products, activedTab, normal }) => {
         )}
       </>
     </div>
-  );
-};
+  )
+}
 
-export default memo(CustomSlider);
+export default memo(CustomSlider)

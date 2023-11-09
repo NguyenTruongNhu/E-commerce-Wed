@@ -5,13 +5,14 @@ import { Link } from 'react-router-dom'
 import path from 'ultils/path'
 import { useDispatch, useSelector } from 'react-redux'
 import { logout } from 'store/user/userSlice'
+import withBaseComponent from 'hocs/withBaseComponent'
+import { showCart } from 'store/app/appSlice'
 
 const { RiPhoneFill, MdEmail, BsHandbagFill, FaUserCircle } = icons
 
-const Header = () => {
+const Header = ({ dispatch }) => {
   const { current } = useSelector((state) => state.user)
   const [isShowOption, setIsShowOption] = useState(false)
-  const dispatch = useDispatch()
   useEffect(() => {
     const handleClickoutOptions = (e) => {
       const profile = document.getElementById('profile')
@@ -44,9 +45,12 @@ const Header = () => {
         </div>
         {current && (
           <Fragment>
-            <div className="cursor-pointer flex items-center justify-center gap-2 px-6 border-r">
+            <div
+              onClick={() => dispatch(showCart())}
+              className="cursor-pointer flex items-center justify-center gap-2 px-6 border-r"
+            >
               <BsHandbagFill color="red" />
-              <span>0 item(s)</span>
+              <span>{`${current?.cart?.length || 0} item(s)`}</span>
             </div>
             <div
               className="cursor-pointer flex items-center justify-center px-6 gap-2 relative "
@@ -90,4 +94,4 @@ const Header = () => {
   )
 }
 
-export default memo(Header)
+export default withBaseComponent(memo(Header))

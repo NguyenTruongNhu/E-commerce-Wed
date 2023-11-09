@@ -7,8 +7,10 @@ import avatar from 'assets/avatarDefault.jpg'
 import { apiUpdateCurrent } from 'apis'
 import { getCurrent } from 'store/user/asyncActions'
 import { toast } from 'react-toastify'
+import withBaseComponent from 'hocs/withBaseComponent'
+import { useSearchParams } from 'react-router-dom'
 
-const Personal = () => {
+const Personal = ({ navigate }) => {
   const {
     register,
     formState: { errors, isDirty },
@@ -17,14 +19,18 @@ const Personal = () => {
   } = useForm()
   const { current } = useSelector((state) => state.user)
   const dispatch = useDispatch()
+  const [searchParams] = useSearchParams()
   useEffect(() => {
     reset({
       firstname: current?.firstname,
       lastname: current?.lastname,
       mobile: current?.mobile,
-      email: current?.email
+      email: current?.email,
+      avatar: current?.avatar,
+      address: current?.address
     })
   }, [current])
+
   const handleUpdateInfor = async (data) => {
     const formData = new FormData()
     if (data.avatar.length > 0) formData.append('avatar', data.avatar[0])
@@ -34,6 +40,7 @@ const Personal = () => {
     if (response.success) {
       dispatch(getCurrent())
       toast.success(response.mes)
+      if (searchParams.get('redirect')) navigate(searchParams.get('redirect'))
     } else toast.error(response.mes)
   }
   return (
@@ -89,6 +96,15 @@ const Personal = () => {
             }
           }}
         />
+        <InputForm
+          label="Address"
+          register={register}
+          errors={errors}
+          id="address"
+          validate={{
+            required: 'Need fill this field'
+          }}
+        />
         <div className="flex items-center gap-2">
           <span className="font-medium">Account status:</span>
           <span>{current?.isBlocked ? 'Blocked' : 'Actived'}</span>
@@ -122,4 +138,4 @@ const Personal = () => {
   )
 }
 
-export default Personal
+export default withBaseComponent(Personal)

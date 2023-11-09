@@ -1,10 +1,10 @@
-import React from "react";
-import { Outlet } from "react-router-dom";
-import { Header, Navigation, TopHeader, Footer } from "../../components";
+import React from 'react'
+import { Outlet } from 'react-router-dom'
+import { Header, Navigation, TopHeader, Footer } from '../../components'
 
 const Public = () => {
   return (
-    <div className="w-full flex flex-col items-center">
+    <div className="max-h-screen overflow-y-auto w-full flex flex-col items-center">
       <TopHeader />
       <Header />
       <Navigation />
@@ -13,7 +13,7 @@ const Public = () => {
       </div>
       <Footer />
     </div>
-  );
-};
+  )
+}
 
-export default Public;
+export default Public

@@ -5,6 +5,7 @@ import { NavLink, Link } from 'react-router-dom'
 import clsx from 'clsx'
 import { AiOutlineCaretDown, AiOutlineCaretRight } from 'react-icons/ai'
 import { useSelector } from 'react-redux'
+import { TbArrowForwardUp } from 'react-icons/tb'
 
 const activedStyle = 'px-4 py-2 flex items-center gap-2  bg-blue-500'
 const notActivedStyle = 'px-4 py-2 flex items-center gap-2  hover:bg-blue-100'
@@ -84,6 +85,9 @@ const MemberSidebar = () => {
             )}
           </Fragment>
         ))}
+        <NavLink className={clsx(notActivedStyle)} to={'/'}>
+          <TbArrowForwardUp size={18} /> Go Home
+        </NavLink>
       </div>
     </div>
   )

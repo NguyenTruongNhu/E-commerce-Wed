@@ -1,46 +1,48 @@
-import React, { memo, useEffect, useState } from "react";
-import { apiGetProducts } from "apis/product";
-import { CustomSlider } from "..";
-import { getNewProducts } from "store/products/asyncActions";
-import { useDispatch, useSelector } from "react-redux";
+import React, { memo, useEffect, useState } from 'react'
+import { apiGetProducts } from 'apis/product'
+import { CustomSlider } from '..'
+import { getNewProducts } from 'store/products/asyncActions'
+import { useDispatch, useSelector } from 'react-redux'
+import clsx from 'clsx'
 const tabs = [
-  { id: 1, name: "best seller" },
-  { id: 2, name: "new arrivals" },
-];
+  { id: 1, name: 'best seller' },
+  { id: 2, name: 'new arrivals' }
+]
 
 function BestSeller() {
-  const [bestSellers, setBestSellers] = useState(null);
-  const [activedTab, setActivedTab] = useState(1);
-  const [products, setProducts] = useState(null);
+  const [bestSellers, setBestSellers] = useState(null)
+  const [activedTab, setActivedTab] = useState(1)
+  const [products, setProducts] = useState(null)
 
-  const dispatch = useDispatch();
-  const { newProducts } = useSelector((state) => state.products);
+  const dispatch = useDispatch()
+  const { newProducts } = useSelector((state) => state.products)
+  const { isShowModal } = useSelector((state) => state.app)
 
   const fetchProducts = async () => {
-    const response = await apiGetProducts({ sort: "-sold" });
+    const response = await apiGetProducts({ sort: '-sold' })
     if (response.success) {
-      setBestSellers(response.products);
-      setProducts(response.products);
+      setBestSellers(response.products)
+      setProducts(response.products)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchProducts();
-    dispatch(getNewProducts());
-  }, []);
+    fetchProducts()
+    dispatch(getNewProducts())
+  }, [])
 
   useEffect(() => {
-    if (activedTab === 1) setProducts(bestSellers);
-    if (activedTab === 2) setProducts(newProducts);
-  }, [activedTab]);
+    if (activedTab === 1) setProducts(bestSellers)
+    if (activedTab === 2) setProducts(newProducts)
+  }, [activedTab])
   return (
     <div>
-      <div className="flex text-[20px] ml-[-32px]">
+      <div className="flex text-[20px] ml-[-32px] z-0">
         {tabs.map((el) => (
           <span
             key={el.id}
             className={`font-semibold cursor-pointer uppercase px-8 border-r text-gray-400 ${
-              activedTab === el.id ? "text-gray-900" : ""
+              activedTab === el.id ? 'text-gray-900' : ''
             } `}
             onClick={() => setActivedTab(el.id)}
           >
@@ -64,7 +66,7 @@ function BestSeller() {
         />
       </div>
     </div>
-  );
+  )
 }
 
-export default memo(BestSeller);
+export default memo(BestSeller)

@@ -5,25 +5,81 @@ import trending from 'assets/trending.png'
 import { renderStarFromNumber } from 'ultils/helper'
 import { SelectOption } from '..'
 import icons from 'ultils/icons'
-import { Link } from 'react-router-dom'
+import { Link, createSearchParams } from 'react-router-dom'
 import path from 'ultils/path'
 import withBaseComponent from 'hocs/withBaseComponent'
+import { showModal } from 'store/app/appSlice'
+import { DetailProduct } from 'pages/public'
+import { apiUpdateCart } from 'apis'
+import { toast } from 'react-toastify'
+import { getCurrent } from 'store/user/asyncActions'
+import { useSelector } from 'react-redux'
+import Swal from 'sweetalert2'
 
-const { AiOutlineMenu, AiFillEye, BsFillSuitHeartFill } = icons
-const Product = ({ productData, isNew, normal, navigate }) => {
+const {
+  AiFillEye,
+  BsFillCartCheckFill,
+  BsFillCartPlusFill,
+  BsFillSuitHeartFill
+} = icons
+const Product = ({
+  productData,
+  isNew,
+  normal,
+  navigate,
+  dispatch,
+  location
+}) => {
   const [isShowOption, setIsShowOption] = useState(false)
+  const { current } = useSelector((state) => state.user)
 
-  const handleClickOptions = (e, flag) => {
+  const handleClickOptions = async (e, flag) => {
     e.stopPropagation()
-    if (flag === 'MENU') {
-      navigate(
-        `/${productData?.category?.toLowerCase()}/${productData?._id}/${
-          productData?.title
-        }`
-      )
+    if (flag === 'CART') {
+      if (!current)
+        return Swal.fire({
+          title: 'Almost...',
+          text: 'Please login first!',
+          icon: 'info',
+          cancelButtonText: 'Not now!',
+          showCancelButton: true,
+          confirmButtonText: 'Go login page'
+        }).then((rs) => {
+          if (rs.isConfirmed)
+            navigate({
+              pathname: `/${path.LOGIN}`,
+              search: createSearchParams({
+                redirect: location.pathname
+              }).toString()
+            })
+        })
+      const response = await apiUpdateCart({
+        pid: productData?._id,
+        color: productData?.color,
+        quantity: 1,
+        price: productData?.price,
+        thumbnail: productData?.thumb,
+        title: productData?.title
+      })
+      if (response.success) {
+        toast.success(response.mes)
+        dispatch(getCurrent())
+      } else toast.error(response.mes)
     }
     if (flag === 'WISHLIST') console.log('wishlist')
-    if (flag === 'QUICK_VIEW') console.log('QUICK_VIEW')
+    if (flag === 'QUICK_VIEW') {
+      dispatch(
+        showModal({
+          isShowModal: true,
+          modalChildren: (
+            <DetailProduct
+              data={{ pid: productData?._id, category: productData?.category }}
+              isQuickView
+            />
+          )
+        })
+      )
+    }
   }
   return (
     <div className="w-full text-base px-[10px]">
@@ -48,13 +104,30 @@ const Product = ({ productData, isNew, normal, navigate }) => {
         <div className="w-full relative">
           {isShowOption && (
             <div className="absolute bottom-[-10px] left-0 right-0 flex justify-center gap-2 animate-slice-top">
-              <span onClick={(e) => handleClickOptions(e, 'QUICK_VIEW')}>
+              <span
+                title="Quick View"
+                onClick={(e) => handleClickOptions(e, 'QUICK_VIEW')}
+              >
                 <SelectOption icons={<AiFillEye />} />
               </span>
-              <span onClick={(e) => handleClickOptions(e, 'MENU')}>
-                <SelectOption icons={<AiOutlineMenu />} />
-              </span>
-              <span onClick={(e) => handleClickOptions(e, 'WISHLIST')}>
+              {current?.cart?.some(
+                (el) => el.product?._id === productData._id
+              ) ? (
+                <span title="Added to Cart">
+                  <SelectOption icons={<BsFillCartCheckFill color="red" />} />
+                </span>
+              ) : (
+                <span
+                  title="Add to Cart"
+                  onClick={(e) => handleClickOptions(e, 'CART')}
+                >
+                  <SelectOption icons={<BsFillCartPlusFill color="black" />} />
+                </span>
+              )}
+              <span
+                title="Add to Wishlist"
+                onClick={(e) => handleClickOptions(e, 'WISHLIST')}
+              >
                 <SelectOption icons={<BsFillSuitHeartFill />} />
               </span>
             </div>
