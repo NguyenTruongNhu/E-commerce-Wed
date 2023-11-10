@@ -24,13 +24,7 @@ const FeatureProduct = () => {
       </h3>
       <div className="flex flex-wrap mt-[15px] mx-[-10px]">
         {products?.map((el) => (
-          <ProductCard
-            key={el._id}
-            totalRatings={el.totalRatings}
-            price={el.price}
-            image={el.thumb}
-            title={el.title}
-          />
+          <ProductCard key={el._id} pid={el._id} image={el.thumb} {...el} />
         ))}
       </div>
 

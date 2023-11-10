@@ -14,13 +14,12 @@ import path from 'ultils/path'
 const Cart = ({ dispatch, navigate }) => {
   const { currentCart } = useSelector((state) => state.user)
   const removeCart = async (pid, color) => {
-    console.log({ pid, color })
     const response = await apiRemoveCart(pid, color)
     if (response.success) {
+      toast.success(response.mes)
       dispatch(getCurrent())
     } else toast.error(response.mes)
   }
-  console.log(currentCart)
   console.log(currentCart)
   return (
     <div
@@ -60,7 +59,7 @@ const Cart = ({ dispatch, navigate }) => {
                 </div>
               </div>
               <span
-                onClick={() => removeCart(el?._id, el.color)}
+                onClick={() => removeCart(el.product._id, el.color)}
                 className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-gray-700 cursor-pointer"
               >
                 <ImBin size={16} />

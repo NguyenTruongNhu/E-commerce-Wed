@@ -65,6 +65,7 @@ const DetailProduct = ({ isQuickView, data, navigate, location, dispatch }) => {
   }, [data, params])
   const fetchProductData = async () => {
     const response = await apiGetProduct(pid)
+    console.log(response)
     if (response.success) {
       setProduct(response.productData)
       setCurrentImage(response.productData?.thumb)
@@ -100,8 +101,8 @@ const DetailProduct = ({ isQuickView, data, navigate, location, dispatch }) => {
       fetchProductData()
       fetchProducts()
     }
+    titleRef.current?.scrollIntoView({ blocck: 'start' })
     window.scrollTo(0, 0)
-    titleRef.current.scrollIntoView({ blocck: 'start' })
   }, [pid])
   useEffect(() => {
     if (pid) {
@@ -171,8 +172,8 @@ const DetailProduct = ({ isQuickView, data, navigate, location, dispatch }) => {
     <div className={clsx('w-full')}>
       {!isQuickView && (
         <div className="h-[81px] flex justify-center items-center bg-gray-100">
-          <div ref={titleRef} className="w-main">
-            <h3 className="font-semibold">
+          <div className="w-main">
+            <h3 ref={titleRef} className="font-semibold">
               {currentProduct.title || product?.title}
             </h3>
             <Breadcrumb

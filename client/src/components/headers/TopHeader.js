@@ -1,35 +1,35 @@
-import React, { memo, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import path from "ultils/path";
-import { getCurrent } from "store/user/asyncActions";
-import { useDispatch, useSelector } from "react-redux";
-import icons from "ultils/icons";
-import { logout, clearMessage } from "store/user/userSlice";
-import Swal from "sweetalert2";
+import React, { memo, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import path from 'ultils/path'
+import { getCurrent } from 'store/user/asyncActions'
+import { useDispatch, useSelector } from 'react-redux'
+import icons from 'ultils/icons'
+import { logout, clearMessage } from 'store/user/userSlice'
+import Swal from 'sweetalert2'
 
-const { AiOutlineLogout } = icons;
+const { AiOutlineLogout } = icons
 
 const TopHeader = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { isLoggedIn, current, mes } = useSelector((state) => state.user);
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const { isLoggedIn, current, mes } = useSelector((state) => state.user)
 
   useEffect(() => {
     const setTimeoutId = setTimeout(() => {
-      if (isLoggedIn) dispatch(getCurrent());
-    }, 300);
+      if (isLoggedIn) dispatch(getCurrent())
+    }, 300)
 
     return () => {
-      clearTimeout(setTimeoutId);
-    };
-  }, [isLoggedIn, dispatch]);
+      clearTimeout(setTimeoutId)
+    }
+  }, [isLoggedIn, dispatch])
   useEffect(() => {
     if (mes)
-      Swal.fire("Oops!", mes, "info").then(() => {
-        dispatch(clearMessage());
-        navigate(`/${path.LOGIN}`);
-      });
-  });
+      Swal.fire('Oops!', mes, 'info').then(() => {
+        dispatch(clearMessage())
+        navigate(`/${path.LOGIN}`)
+      })
+  })
   return (
     <div className="h-[38px] w-full bg-main flex justify-center items-center">
       <div className="w-main flex items-center justify-between text-xs text-white">
@@ -51,7 +51,7 @@ const TopHeader = () => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default memo(TopHeader);
+export default memo(TopHeader)

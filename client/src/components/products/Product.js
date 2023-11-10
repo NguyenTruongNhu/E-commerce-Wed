@@ -10,11 +10,12 @@ import path from 'ultils/path'
 import withBaseComponent from 'hocs/withBaseComponent'
 import { showModal } from 'store/app/appSlice'
 import { DetailProduct } from 'pages/public'
-import { apiUpdateCart } from 'apis'
+import { apiUpdateCart, apiUpdateWishlist } from 'apis'
 import { toast } from 'react-toastify'
 import { getCurrent } from 'store/user/asyncActions'
 import { useSelector } from 'react-redux'
 import Swal from 'sweetalert2'
+import clsx from 'clsx'
 
 const {
   AiFillEye,
@@ -28,7 +29,9 @@ const Product = ({
   normal,
   navigate,
   dispatch,
-  location
+  location,
+  pid,
+  className
 }) => {
   const [isShowOption, setIsShowOption] = useState(false)
   const { current } = useSelector((state) => state.user)
@@ -66,7 +69,13 @@ const Product = ({
         dispatch(getCurrent())
       } else toast.error(response.mes)
     }
-    if (flag === 'WISHLIST') console.log('wishlist')
+    if (flag === 'WISHLIST') {
+      const response = await apiUpdateWishlist(pid)
+      if (response.success) {
+        dispatch(getCurrent())
+        toast.success(response.mes)
+      } else toast.error(response.mes)
+    }
     if (flag === 'QUICK_VIEW') {
       dispatch(
         showModal({
@@ -82,7 +91,7 @@ const Product = ({
     }
   }
   return (
-    <div className="w-full text-base px-[10px]">
+    <div className={clsx('w-full text-base px-[10px]', className)}>
       <div
         onClick={(e) =>
           navigate(
@@ -128,7 +137,17 @@ const Product = ({
                 title="Add to Wishlist"
                 onClick={(e) => handleClickOptions(e, 'WISHLIST')}
               >
-                <SelectOption icons={<BsFillSuitHeartFill />} />
+                <SelectOption
+                  icons={
+                    <BsFillSuitHeartFill
+                      color={
+                        current?.wishlist?.some((i) => i._id === pid)
+                          ? 'red'
+                          : 'black'
+                      }
+                    />
+                  }
+                />
               </span>
             </div>
           )}

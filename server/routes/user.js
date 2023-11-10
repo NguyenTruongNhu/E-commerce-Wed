@@ -14,7 +14,6 @@ router.post("/forgotpassword", ctrls.forgotPassword);
 router.put("/resetpassword", ctrls.resetPassword);
 
 router.get("/", [verifyAccessToken, isAdmin], ctrls.getUsers);
-router.delete("/:uid", [verifyAccessToken, isAdmin], ctrls.deleteUser);
 router.put(
   "/current",
   [verifyAccessToken],
@@ -28,6 +27,8 @@ router.delete(
   [verifyAccessToken],
   ctrls.removeProductInCart
 );
+router.put("/wishlist/:pid", [verifyAccessToken], ctrls.updateWishlist);
+router.delete("/:uid", [verifyAccessToken, isAdmin], ctrls.deleteUser);
 router.put("/:uid", [verifyAccessToken, isAdmin], ctrls.updateUserByAdmin);
 
 module.exports = router;

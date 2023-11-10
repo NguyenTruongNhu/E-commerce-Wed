@@ -70,3 +70,8 @@ export const apiRemoveCart = (pid, color) =>
     url: `/user/remove-cart/${pid}/${color}`,
     method: 'delete'
   })
+export const apiUpdateWishlist = (pid) =>
+  axios({
+    url: `/user/wishlist/` + pid,
+    method: 'put'
+  })

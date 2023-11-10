@@ -134,7 +134,8 @@ const getCurrent = asyncHandler(async (req, res) => {
         path: "product",
         select: "title thumb price",
       },
-    });
+    })
+    .populate("wishlist", "title thumb price color");
   return res.status(200).json({
     success: user ? true : false,
     rs: user ? user : "User not found",
@@ -382,11 +383,11 @@ const updateCart = asyncHandler(async (req, res) => {
 const removeProductInCart = asyncHandler(async (req, res) => {
   const { _id } = req.user;
   const { pid, color } = req.params;
+  console.log({ pid });
   const user = await User.findById(_id).select("cart");
-  const alreadyProduct = user?.cart?.find(
+  const alreadyProduct = user.cart?.find(
     (el) => el.product.toString() === pid && el.color === color
   );
-
   if (!alreadyProduct) {
     return res.status(200).json({
       success: true,
@@ -395,12 +396,16 @@ const removeProductInCart = asyncHandler(async (req, res) => {
   }
   const response = await User.findByIdAndUpdate(
     _id,
-    { $pull: { cart: { product: pid, color } } },
+    {
+      $pull: {
+        cart: { product: pid, color },
+      },
+    },
     { new: true }
   );
   return res.status(200).json({
     success: response ? true : false,
-    mes: response ? "Updated your cart" : "Something went wrong",
+    mes: response ? "Remove your cart" : "Something went wrong",
   });
 });
 
@@ -410,6 +415,34 @@ const createUsers = asyncHandler(async (req, res) => {
     success: response ? true : false,
     users: response ? response : "Something went wrong",
   });
+});
+const updateWishlist = asyncHandler(async (req, res) => {
+  const { pid } = req.params;
+  const { _id } = req.user;
+  const user = await User.findById(_id);
+  const alreadyInWishlist = user.wishlist?.find((el) => el.toString() === pid);
+
+  if (alreadyInWishlist) {
+    const response = await User.findByIdAndUpdate(
+      _id,
+      { $pull: { wishlist: pid } },
+      { new: true }
+    );
+    return res.json({
+      success: response ? true : false,
+      mes: response ? "Updated your wishlist" : "Failed to update wishlist",
+    });
+  } else {
+    const response = await User.findByIdAndUpdate(
+      _id,
+      { $push: { wishlist: pid } },
+      { new: true }
+    );
+    return res.json({
+      success: response ? true : false,
+      mes: response ? "Updated your wishlist" : "Failed to update wishlist",
+    });
+  }
 });
 
 module.exports = {
@@ -429,4 +462,5 @@ module.exports = {
   finalRegister,
   createUsers,
   removeProductInCart,
+  updateWishlist,
 };
