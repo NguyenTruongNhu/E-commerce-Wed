@@ -1,9 +1,8 @@
 import React, { memo, useEffect, useState } from 'react'
 import { apiGetProducts } from 'apis/product'
-import { CustomSlider } from '..'
 import { getNewProducts } from 'store/products/asyncActions'
 import { useDispatch, useSelector } from 'react-redux'
-import clsx from 'clsx'
+import CustomSlider from 'components/common/CustomSlider'
 const tabs = [
   { id: 1, name: 'best seller' },
   { id: 2, name: 'new arrivals' }
@@ -16,10 +15,9 @@ function BestSeller() {
 
   const dispatch = useDispatch()
   const { newProducts } = useSelector((state) => state.products)
-  const { isShowModal } = useSelector((state) => state.app)
 
   const fetchProducts = async () => {
-    const response = await apiGetProducts({ sort: '-sold' })
+    const response = await apiGetProducts({ sort: '-totalRatings' })
     if (response.success) {
       setBestSellers(response.products)
       setProducts(response.products)
@@ -53,7 +51,7 @@ function BestSeller() {
       <div className="mt-4 mx-[-10px] border-t-2 border-main pt-4 ">
         <CustomSlider products={products} activedTab={activedTab} />
       </div>
-      <div className="w-full flex gap-4 mt-4">
+      <div className="w-full cursor-pointer flex gap-4 mt-4">
         <img
           src="https://digital-world-2.myshopify.com/cdn/shop/files/banner2-home2_2000x_crop_center.png?v=1613166657"
           alt="banner"

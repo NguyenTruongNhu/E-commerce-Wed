@@ -13,6 +13,7 @@ import {
   PURGE,
   REGISTER
 } from 'redux-persist'
+import blogSlice from './blogs/blogSlice'
 const comomConfig = {
   storage
 }
@@ -30,6 +31,7 @@ const productConfig = {
 export const store = configureStore({
   reducer: {
     app: appSlice,
+    blog: blogSlice,
     products: persistReducer(productConfig, productSlice),
     user: persistReducer(userConfig, userSlice)
   },

@@ -5,7 +5,7 @@ import trending from 'assets/trending.png'
 import { renderStarFromNumber } from 'ultils/helper'
 import { SelectOption } from '..'
 import icons from 'ultils/icons'
-import { Link, createSearchParams } from 'react-router-dom'
+import { createSearchParams } from 'react-router-dom'
 import path from 'ultils/path'
 import withBaseComponent from 'hocs/withBaseComponent'
 import { showModal } from 'store/app/appSlice'
@@ -91,7 +91,7 @@ const Product = ({
     }
   }
   return (
-    <div className={clsx('w-full text-base px-[10px]', className)}>
+    <div className={clsx('w-full text-base px-[10px] ', className)}>
       <div
         onClick={(e) =>
           navigate(
@@ -100,7 +100,7 @@ const Product = ({
             }`
           )
         }
-        className="w-full border p-[15px] flex flex-col items-center"
+        className="w-full border  p-[15px] flex flex-col items-center"
         onMouseEnter={(e) => {
           e.stopPropagation()
           setIsShowOption(true)
@@ -110,7 +110,7 @@ const Product = ({
           setIsShowOption(false)
         }}
       >
-        <div className="w-full relative">
+        <div className="w-full relative ">
           {isShowOption && (
             <div className="absolute bottom-[-10px] left-0 right-0 flex justify-center gap-2 animate-slice-top">
               <span

@@ -4,7 +4,8 @@ import {
   BestSeller,
   FeatureProduct,
   CustomSlider,
-  DealDaily
+  DealDaily,
+  ArticleCard
 } from '../../components'
 import { useSelector } from 'react-redux'
 import icons from '../../ultils/icons'
@@ -16,7 +17,9 @@ const { IoIosArrowForward } = icons
 const Home = ({ navigate }) => {
   const { newProducts } = useSelector((state) => state.products)
   const { categories } = useSelector((state) => state.app)
+  const { newBlogs } = useSelector((state) => state.blog)
   const { isLoggedIn, current } = useSelector((state) => state.user)
+  console.log(newBlogs)
   return (
     <>
       <div className="w-main flex mt-6">
@@ -86,6 +89,9 @@ const Home = ({ navigate }) => {
         <h3 className="text-[20px] font-semibold py-[15px] border-b-2 border-main">
           BLOG POSTS
         </h3>
+        <div className=" mt-4 ">
+          <CustomSlider blogs={newBlogs} />
+        </div>
       </div>
     </>
   )

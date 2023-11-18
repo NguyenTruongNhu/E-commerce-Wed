@@ -1,10 +1,9 @@
-import { Breadcrumb, Button } from 'components'
+import { Button } from 'components'
 import OrderItem from 'components/products/OrderItem'
 import withBaseComponent from 'hocs/withBaseComponent'
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { Link, createSearchParams } from 'react-router-dom'
-import { updateCart } from 'store/user/userSlice'
+import { createSearchParams } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import { formatMoney } from 'ultils/helper'
 import path from 'ultils/path'
@@ -40,19 +39,14 @@ const DetailCart = ({ location, dispatch, navigate }) => {
       <div className="h-[81px] flex justify-center items-center bg-gray-100">
         <div className="w-main">
           <h3 className="font-semibold text-2xl uppercase">My Cart</h3>
-          {/* <Breadcrumb
-            category={location?.pathname
-              ?.replace('/', '')
-              ?.split('-')
-              ?.join(' ')}
-          /> */}
         </div>
       </div>
       <div className="flex flex-col border w-main mx-auto  my-8">
         <div className="w-main mx-auto font-bold  bg-gray-200 py-3 grid grid-cols-10">
           <span className="col-span-6 w-full text-center">Products</span>
           <span className="col-span-1 w-full text-center">Quantity</span>
-          <span className="col-span-3 w-full text-center">Price</span>
+          <span className="col-span-2 w-full text-center">Price</span>
+          <span className="col-span-1 w-full text-center"></span>
         </div>
         {currentCart.map((el) => (
           <OrderItem

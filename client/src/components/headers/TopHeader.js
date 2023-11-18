@@ -31,8 +31,8 @@ const TopHeader = () => {
       })
   })
   return (
-    <div className="h-[38px] w-full bg-main flex justify-center items-center">
-      <div className="w-main flex items-center justify-between text-xs text-white">
+    <div className=" w-full bg-main flex justify-center items-center">
+      <div className="w-main h-[38px] flex items-center justify-between text-xs text-white">
         <span>ORDER ONLINE OR CALL US (+1800) 000 8808</span>
         {isLoggedIn && current ? (
           <div className="flex gap-4 text-sm items-center">

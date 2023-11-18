@@ -65,7 +65,6 @@ const DetailProduct = ({ isQuickView, data, navigate, location, dispatch }) => {
   }, [data, params])
   const fetchProductData = async () => {
     const response = await apiGetProduct(pid)
-    console.log(response)
     if (response.success) {
       setProduct(response.productData)
       setCurrentImage(response.productData?.thumb)
@@ -101,7 +100,7 @@ const DetailProduct = ({ isQuickView, data, navigate, location, dispatch }) => {
       fetchProductData()
       fetchProducts()
     }
-    titleRef.current?.scrollIntoView({ blocck: 'start' })
+    titleRef.current?.scrollIntoView({ block: 'start' })
     window.scrollTo(0, 0)
   }, [pid])
   useEffect(() => {
@@ -168,6 +167,7 @@ const DetailProduct = ({ isQuickView, data, navigate, location, dispatch }) => {
       dispatch(getCurrent())
     } else toast.error(response.mes)
   }
+  // console.log({ currentProduct, currentImage })
   return (
     <div className={clsx('w-full')}>
       {!isQuickView && (
@@ -195,18 +195,18 @@ const DetailProduct = ({ isQuickView, data, navigate, location, dispatch }) => {
         <div
           className={clsx('flex flex-col gap-4 w-2/5', isQuickView && 'w-1/2')}
         >
-          <div className="h-[458px] w-[458px] border flex items-center overflow-hidden">
+          <div className="h-[458px] w-[458px] border flex items-center">
             <ReactImageMagnify
               {...{
                 smallImage: {
                   alt: 'Wristwatch by Ted Baker London',
                   isFluidWidth: true,
-                  src: currentProduct.thumb || currentImage
+                  src: currentImage
                 },
                 largeImage: {
-                  src: currentProduct.thumb || currentImage,
-                  width: 1800,
-                  height: 1500
+                  src: currentImage,
+                  width: 1000,
+                  height: 1000
                 }
               }}
             />
@@ -215,7 +215,7 @@ const DetailProduct = ({ isQuickView, data, navigate, location, dispatch }) => {
             <Slider className="image-slider" {...settings}>
               {currentProduct.images.length === 0 &&
                 product?.images?.map((el) => (
-                  <div key={el} className="flex w-full justify-between">
+                  <div key={el} className="flex w-full  justify-between">
                     <img
                       src={el}
                       alt="sub-product"

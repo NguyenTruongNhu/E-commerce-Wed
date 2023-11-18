@@ -1,29 +1,126 @@
 const Blog = require("../models/blog");
 const asyncHandler = require("express-async-handler");
+const slugify = require("slugify");
 
 const createNewBlog = asyncHandler(async (req, res) => {
-  const { title, description, category } = req.body;
-  if (!title || !description || !category) throw new Error("Missing inputs");
+  const { title, caption, description } = req.body;
+  const photo = req?.files?.photo[0]?.path;
+  if (!title || !caption || !description) throw new Error("Missing inputs");
+  req.body.slug = slugify(title);
+  req.body.user = req.user._id;
+  if (photo) req.body.photo = photo;
   const response = await Blog.create(req.body);
   return res.status(200).json({
     success: response ? true : false,
-    createdBlog: response ? response : "Cannot create new blog",
+    mes: response ? response : "Cannot create new blog",
   });
 });
 const updateBlog = asyncHandler(async (req, res) => {
   const { bid } = req.params;
-  if (Object.keys(req.body).length === 0) throw new Error("Missing inputs");
+  if (req?.files?.thumb) req.body.thumb = files?.thumb[0]?.path;
+  if (req.body && req.body.title) req.body.slug = slugify(req.body.title);
   const response = await Blog.findByIdAndUpdate(bid, req.body, { new: true });
   return res.status(200).json({
     success: response ? true : false,
-    updatedBlog: response ? response : "Cannot update blog",
+    mes: response ? response : "Cannot update blog",
   });
 });
 const getBlogs = asyncHandler(async (req, res) => {
-  const response = await Blog.find();
-  return res.status(200).json({
-    success: response ? true : false,
-    blogs: response ? response : "Cannot get blog",
+  const queries = { ...req.query };
+
+  const excludeFields = ["limit", "sort", "page", "fields"];
+  excludeFields.forEach((el) => delete queries[el]);
+
+  //Format lại các operators
+  let queryString = JSON.stringify(queries);
+  queryString = queryString.replace(
+    /\b(gte|gt|lt|lte)\b/g,
+    (matchedEl) => `$${matchedEl}`
+  );
+  const formatedQueries = JSON.parse(queryString);
+  let colorQueryObject = {};
+  if (queries?.title) {
+    formatedQueries.title = { $regex: queries.title, $options: "i" };
+  }
+  if (queries?.category) {
+    formatedQueries.category = { $regex: queries.category, $options: "i" };
+  }
+  if (queries?.caption) {
+    formatedQueries.brand = { $regex: queries.brand, $options: "i" };
+  }
+  let queryObject = {};
+  if (queries?.q) {
+    delete formatedQueries.q;
+    queryObject = {
+      $or: [
+        { title: { $regex: queries.q, $options: "i" } },
+        { category: { $regex: queries.q, $options: "i" } },
+        { caption: { $regex: queries.q, $options: "i" } },
+        { description: { $regex: queries.q, $options: "i" } },
+      ],
+    };
+  }
+
+  const qr = { ...colorQueryObject, ...formatedQueries, ...queryObject };
+
+  let queryCommand = Blog.find(qr).populate([
+    {
+      path: "user",
+      select: "firstname lastname avatar role",
+    },
+    {
+      path: "comments",
+      match: {
+        check: true,
+        parent: null,
+      },
+      populate: [
+        {
+          path: "user",
+          select: "firstname lastname avatar",
+        },
+        {
+          path: "replies",
+          match: {
+            check: true,
+          },
+          populate: [
+            {
+              path: "user",
+              select: "firstname lastname avatar",
+            },
+          ],
+        },
+      ],
+    },
+  ]);
+
+  //Sorting
+  if (req.query.sort) {
+    const sortBy = req.query.sort.split(",").join(" ");
+    queryCommand = queryCommand.sort(sortBy);
+  }
+  //fields limiting - lọc ra những cái cần nếu có dấu trừ đằng trước thì loại trừ nó
+  if (req.query.fields) {
+    const fields = req.query.fields.split(",").join(" ");
+    queryCommand = queryCommand.select(fields);
+  }
+  // Pagination -- phân trang
+  const page = +req.query.page || 1;
+  const limit = +req.query.limit || process.env.LIMIT_BLOGS;
+  const skip = (page - 1) * limit;
+  queryCommand.skip(skip).limit(limit);
+
+  //Excute query
+  queryCommand.exec(async (err, response) => {
+    if (err) throw new Error(err.message);
+    const counts = await Blog.find(qr).countDocuments();
+
+    return res.status(200).json({
+      success: response ? true : false,
+      counts,
+      mes: response ? response : "Can not get Blog",
+    });
   });
 });
 
@@ -40,7 +137,7 @@ const likeBlog = asyncHandler(async (req, res) => {
     );
     return res.status(200).json({
       success: response ? true : false,
-      rs: response,
+      mes: response ? "Successfully" : "Something went wrong",
     });
   }
   const isLiked = blog?.likes?.find((el) => el.toString() === _id);
@@ -52,7 +149,7 @@ const likeBlog = asyncHandler(async (req, res) => {
     );
     return res.status(200).json({
       success: response ? true : false,
-      rs: response,
+      mes: response ? "Successfully" : "Something went wrong",
     });
   } else {
     const response = await Blog.findByIdAndUpdate(
@@ -62,7 +159,7 @@ const likeBlog = asyncHandler(async (req, res) => {
     );
     return res.status(200).json({
       success: response ? true : false,
-      rs: response,
+      mes: response ? "Successfully" : "Something went wrong",
     });
   }
 });
@@ -80,7 +177,7 @@ const dislikeBlog = asyncHandler(async (req, res) => {
     );
     return res.status(200).json({
       success: response ? true : false,
-      rs: response,
+      mes: response ? "Successfully" : "Something went wrong",
     });
   }
   const isDisliked = blog?.dislikes?.find((el) => el.toString() === _id);
@@ -92,7 +189,7 @@ const dislikeBlog = asyncHandler(async (req, res) => {
     );
     return res.status(200).json({
       success: response ? true : false,
-      rs: response,
+      mes: response ? "Successfully" : "Something went wrong",
     });
   } else {
     const response = await Blog.findByIdAndUpdate(
@@ -102,7 +199,7 @@ const dislikeBlog = asyncHandler(async (req, res) => {
     );
     return res.status(200).json({
       success: response ? true : false,
-      rs: response,
+      mes: response ? "Successfully" : "Something went wrong",
     });
   }
 });
@@ -113,12 +210,48 @@ const getBlog = asyncHandler(async (req, res) => {
     bid,
     { $inc: { numberViews: 1 } },
     { new: true }
-  )
-    .populate("likes", "firstname lastname")
-    .populate("dislikes", "firstname lastname");
+  ).populate([
+    {
+      path: "user",
+      select: "firstname lastname avatar role",
+    },
+    {
+      path: "comments",
+      match: {
+        check: true,
+        parent: null,
+      },
+      populate: [
+        {
+          path: "user",
+          select: "firstname lastname avatar",
+        },
+        {
+          path: "replies",
+          match: {
+            check: true,
+          },
+          populate: [
+            {
+              path: "user",
+              select: "firstname lastname avatar",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      path: "likes",
+      select: "firstname lastname",
+    },
+    {
+      path: "dislikes",
+      select: "firstname lastname",
+    },
+  ]);
   return res.status(200).json({
     success: blog ? true : false,
-    rs: blog,
+    mes: blog,
   });
 });
 
@@ -127,7 +260,7 @@ const deleteBlog = asyncHandler(async (req, res) => {
   const blog = await Blog.findByIdAndDelete(bid);
   return res.status(200).json({
     success: blog ? true : false,
-    deletedBlog: blog || "Some thing went wrong",
+    mes: blog ? "Deleted." : "Can not delete blog",
   });
 });
 

@@ -14,7 +14,7 @@ import { getDealDaily } from 'store/products/productSlice'
 
 const { AiFillStar, AiOutlineMenu } = icons
 let idInterval
-const DealDaily = ({ dispatch }) => {
+const DealDaily = ({ dispatch, navigate }) => {
   const [hour, setHour] = useState(0)
   const [minute, setMinute] = useState(0)
   const [second, setSecond] = useState(0)
@@ -91,7 +91,7 @@ const DealDaily = ({ dispatch }) => {
         </span>
         <span className="flex-1"></span>
       </div>
-      <div className="w-full flex flex-col items-center pt-6 px-4 gap-2">
+      <div className="w-full flex flex-col items-center cursor-pointer pt-6 px-4 gap-2">
         <img
           src={
             dealDaily?.data?.thumb ||

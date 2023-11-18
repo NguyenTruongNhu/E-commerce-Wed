@@ -7,8 +7,12 @@ var blogSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    description: {
+    caption: {
       type: String,
+      required: true,
+    },
+    description: {
+      type: Array,
       required: true,
     },
     category: {
@@ -19,7 +23,16 @@ var blogSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-
+    slug: {
+      type: String,
+      required: true,
+      // unique: true,
+      lowercase: true,
+    },
+    user: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+    },
     likes: [
       {
         type: mongoose.Types.ObjectId,
@@ -32,15 +45,10 @@ var blogSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
-    image: {
+    photo: {
       type: String,
-      default:
-        "https://www.shutterstock.com/image-illustration/template-design-concept-sketch-illustration-260nw-377077327.jpg",
     },
-    author: {
-      type: String,
-      default: "Admin",
-    },
+    tags: { type: [String] },
   },
   {
     timestamps: true,
@@ -48,6 +56,11 @@ var blogSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
+blogSchema.virtual("comments", {
+  ref: "Comment",
+  localField: "_id",
+  foreignField: "blog",
+});
 
 //Export the model
 module.exports = mongoose.model("Blog", blogSchema);

@@ -34,8 +34,9 @@ import { getCategories } from 'store/app/asyncActions'
 import { useDispatch, useSelector } from 'react-redux'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { Cart, Modal } from 'components'
+import { Cart, DetailBlog, Modal } from 'components'
 import { showCart } from 'store/app/appSlice'
+import { getNewBlogs } from 'store/blogs/asyncActions'
 
 function App() {
   const dispatch = useDispatch()
@@ -44,6 +45,7 @@ function App() {
   )
   useEffect(() => {
     dispatch(getCategories())
+    dispatch(getNewBlogs())
   }, [])
 
   return (
@@ -62,6 +64,7 @@ function App() {
         <Route path={path.PUBLIC} element={<Public />}>
           <Route path={path.HOME} element={<Home />} />
           <Route path={path.BLOGS} element={<Blog />} />
+          <Route path={path.BLOGS__CATEGORY__BID} element={<DetailBlog />} />
           <Route
             path={path.DETAIL_PRODUCT__CATEGORY__PID__TITLE}
             element={<DetailProduct />}

@@ -1,5 +1,6 @@
+import ArticleCard from 'components/blogs/ArticleCard'
+import Product from 'components/products/Product'
 import React, { memo } from 'react'
-import { Product } from 'components'
 import Slider from 'react-slick'
 
 const settings = {
@@ -9,13 +10,13 @@ const settings = {
   slidesToShow: 3,
   slidesToScroll: 1
 }
-
-const CustomSlider = ({ products, activedTab, normal }) => {
+//flex flex-wrap gap-4 mt-4 justify-between
+const CustomSlider = ({ products, blogs, activedTab, normal }) => {
   return (
     <div>
       <>
         {products && (
-          <Slider className="custom-slider" {...settings}>
+          <Slider className="custom-slider cursor-pointer" {...settings}>
             {products?.map((el, index) => (
               <Product
                 key={index}
@@ -23,7 +24,15 @@ const CustomSlider = ({ products, activedTab, normal }) => {
                 productData={el}
                 isNew={activedTab === 1 ? false : true}
                 normal={normal}
+                className=""
               />
+            ))}
+          </Slider>
+        )}
+        {blogs && (
+          <Slider className="custom-slider" {...settings}>
+            {blogs?.map((el, index) => (
+              <ArticleCard key={index} bid={el._id} blogData={el} />
             ))}
           </Slider>
         )}

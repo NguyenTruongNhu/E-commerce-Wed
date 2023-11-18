@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useRef } from 'react'
 import {
   useParams,
   useSearchParams,
@@ -30,6 +30,7 @@ const Products = () => {
   const [sort, setSort] = useState('')
   const navigate = useNavigate()
   const { category } = useParams()
+  const titleRef = useRef()
 
   const fetchProductsByCategory = async (queries) => {
     if (category && category !== 'products') queries.category = category
@@ -57,7 +58,9 @@ const Products = () => {
     delete queries.to
 
     const q = { ...priceQuery, ...queries }
+
     fetchProductsByCategory(q)
+    titleRef.current?.scrollIntoView({ block: 'start' })
     window.scrollTo(0, 0)
   }, [params])
 
@@ -86,7 +89,9 @@ const Products = () => {
     <div className="w-full">
       <div className="h-[81px] flex justify-center items-center bg-gray-100">
         <div className="w-main">
-          <h3 className="font-semibold uppercase">{category}</h3>
+          <h3 ref={titleRef} className="font-semibold uppercase">
+            {category}
+          </h3>
           <Breadcrumb category={category} />
         </div>
       </div>
