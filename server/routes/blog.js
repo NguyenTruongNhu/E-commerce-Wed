@@ -4,7 +4,12 @@ const { verifyAccessToken, isAdmin } = require("../middlewares/verifyToken");
 const uploader = require("../config/cloudinary.config");
 
 router.get("/", ctrls.getBlogs);
-router.post("/", [verifyAccessToken, isAdmin], ctrls.createNewBlog);
+router.post(
+  "/",
+  [verifyAccessToken, isAdmin],
+  uploader.single("photo"),
+  ctrls.createNewBlog
+);
 router.get("/:bid", ctrls.getBlog);
 router.put("/likes/:bid", verifyAccessToken, ctrls.likeBlog);
 router.put(
@@ -14,6 +19,11 @@ router.put(
   ctrls.uploadImagesBlog
 );
 router.put("/dislike/:bid", verifyAccessToken, ctrls.dislikeBlog);
-router.put("/:bid", [verifyAccessToken, isAdmin], ctrls.updateBlog);
+router.put(
+  "/:bid",
+  [verifyAccessToken, isAdmin],
+  uploader.single("photo"),
+  ctrls.updateBlog
+);
 router.delete("/:bid", [verifyAccessToken, isAdmin], ctrls.deleteBlog);
 module.exports = router;

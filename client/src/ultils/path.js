@@ -20,8 +20,12 @@ const path = {
   DASHBOARD: 'dashboard',
   MANAGE_USER: 'manage-user',
   MANAGE_PRODUCTS: 'manage-products',
+  MANAGE_BLOGS: 'manage-blogs',
   MANAGE_ORDER: 'manage-order',
+  MANAGE_VARIANT: 'manage-variant',
+  MANAGE_CUSTOM_PRODUCT: 'manage-custom-product',
   CREATE_PRODUCT: 'create-product',
+  CREATE_BLOG: 'create-blog',
 
   //Member
   MEMBER: 'member',

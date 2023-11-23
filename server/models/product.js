@@ -42,6 +42,7 @@ var productSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+
     images: {
       type: Array,
     },
@@ -49,6 +50,7 @@ var productSchema = new mongoose.Schema(
       type: String,
       require: true,
     },
+
     ratings: [
       {
         star: {
@@ -78,6 +80,7 @@ var productSchema = new mongoose.Schema(
         images: Array,
         title: String,
         sku: String,
+        proId: String,
       },
     ],
   },

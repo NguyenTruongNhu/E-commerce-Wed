@@ -1,9 +1,10 @@
-import { Button, Product } from 'components'
+import { Product } from 'components'
 import React from 'react'
 import { useSelector } from 'react-redux'
 
 const Wishlist = () => {
   const { current } = useSelector((state) => state.user)
+
   return (
     <div className="w-full relative px-4">
       <header className="text-3xl font-semibold py-4 border-b border-b-blue-200">

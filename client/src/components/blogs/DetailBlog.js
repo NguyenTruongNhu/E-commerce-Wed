@@ -29,7 +29,6 @@ const DetailBlog = ({ dispatch, navigate, location }) => {
       setUserData(response.mes.user)
     }
   }
-
   const rerender = useCallback(() => {
     fetchBlogData()
   }, [blogData?.comments])

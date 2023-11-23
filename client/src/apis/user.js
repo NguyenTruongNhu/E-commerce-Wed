@@ -75,3 +75,9 @@ export const apiUpdateWishlist = (pid) =>
     url: `/user/wishlist/` + pid,
     method: 'put'
   })
+export const apiUserCustom = (data) =>
+  axios({
+    url: '/user/customProduct',
+    method: 'put',
+    data
+  })

@@ -254,7 +254,13 @@ const getUsers = asyncHandler(async (req, res) => {
       { email: { $regex: req.query.q, $options: "i" } },
     ];
   }
-  let queryCommand = User.find(formatedQueries);
+  let queryCommand = User.find(formatedQueries).populate({
+    path: "userCustomProduct",
+    populate: {
+      path: "product",
+      select: "title thumb price quantity",
+    },
+  });
 
   //Sorting
   if (req.query.sort) {
@@ -337,6 +343,47 @@ const updateUserAddress = asyncHandler(async (req, res) => {
     updatedUser: response ? response : "Something went wrong",
   });
 });
+const userCustomProduct = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const { pid, note } = req.body;
+  console.log({ pid, note });
+  if (!pid) throw new Error("Mising inputs");
+  const customProduct = await User.findById(_id).select("userCustomProduct");
+  const alreadyCustomProduct = customProduct?.userCustomProduct?.find(
+    (el) => el.product.toString() === pid
+  );
+  if (alreadyCustomProduct) {
+    // updates star & comment
+    await User.updateOne(
+      {
+        userCustomProduct: { $elemMatch: alreadyCustomProduct },
+      },
+      {
+        $set: {
+          "userCustomProduct.$.note": note,
+        },
+      },
+      { new: true }
+    );
+    return res.status(200).json({
+      success: response ? true : false,
+      mes: response ? "Successfully" : "Something went wrong",
+    });
+  } else {
+    const response = await User.findByIdAndUpdate(
+      _id,
+      {
+        $push: { userCustomProduct: { product: pid, note } },
+      },
+      { new: true }
+    );
+    console.log(response);
+    return res.status(200).json({
+      success: response ? true : false,
+      mes: response ? "Successfully" : "Something went wrong",
+    });
+  }
+});
 const updateCart = asyncHandler(async (req, res) => {
   const { _id } = req.user;
   const { pid, quantity = 1, color, price, thumbnail, title } = req.body;
@@ -383,7 +430,6 @@ const updateCart = asyncHandler(async (req, res) => {
 const removeProductInCart = asyncHandler(async (req, res) => {
   const { _id } = req.user;
   const { pid, color } = req.params;
-  console.log({ pid });
   const user = await User.findById(_id).select("cart");
   const alreadyProduct = user.cart?.find(
     (el) => el.product.toString() === pid && el.color === color
@@ -463,4 +509,5 @@ module.exports = {
   createUsers,
   removeProductInCart,
   updateWishlist,
+  userCustomProduct,
 };

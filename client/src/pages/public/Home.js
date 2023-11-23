@@ -19,7 +19,6 @@ const Home = ({ navigate }) => {
   const { categories } = useSelector((state) => state.app)
   const { newBlogs } = useSelector((state) => state.blog)
   const { isLoggedIn, current } = useSelector((state) => state.user)
-  console.log(newBlogs)
   return (
     <>
       <div className="w-main flex mt-6">

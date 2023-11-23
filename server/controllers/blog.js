@@ -4,7 +4,8 @@ const slugify = require("slugify");
 
 const createNewBlog = asyncHandler(async (req, res) => {
   const { title, caption, description } = req.body;
-  const photo = req?.files?.photo[0]?.path;
+  const photo = req?.file?.path;
+
   if (!title || !caption || !description) throw new Error("Missing inputs");
   req.body.slug = slugify(title);
   req.body.user = req.user._id;
@@ -17,7 +18,7 @@ const createNewBlog = asyncHandler(async (req, res) => {
 });
 const updateBlog = asyncHandler(async (req, res) => {
   const { bid } = req.params;
-  if (req?.files?.thumb) req.body.thumb = files?.thumb[0]?.path;
+  if (req?.files?.photo) req.body.photo = files?.photo[0]?.path;
   if (req.body && req.body.title) req.body.slug = slugify(req.body.title);
   const response = await Blog.findByIdAndUpdate(bid, req.body, { new: true });
   return res.status(200).json({

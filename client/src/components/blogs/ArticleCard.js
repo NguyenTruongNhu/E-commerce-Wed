@@ -1,6 +1,7 @@
 import React, { memo } from 'react'
 import withBaseComponent from 'hocs/withBaseComponent'
 import { BsCheckLg } from 'react-icons/bs'
+import DOMPurify from 'dompurify'
 
 const ArticleCard = ({ dispatch, blogData, bid, navigate }) => {
   return (
@@ -20,9 +21,14 @@ const ArticleCard = ({ dispatch, blogData, bid, navigate }) => {
             {blogData.caption}
           </span>
 
-          <p className="text-sm line-clamp text-gray-500 text-center mt-4">
-            {blogData.description}
-          </p>
+          {blogData?.description?.length === 1 && (
+            <span
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(blogData?.description[0])
+              }}
+              className="text-sm line-clamp text-gray-500 text-center mt-4"
+            ></span>
+          )}
 
           <div className="flex justify-between flex-nowrap items-center mt-6">
             <div className="flex items-center gap-x-2">

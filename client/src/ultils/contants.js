@@ -221,12 +221,43 @@ export const adminSidebar = [
   },
   {
     id: 4,
+    type: 'PARENT',
+    text: 'Manage blogs',
+    icon: <TbBrandProducthunt size={20} />,
+    submenu: [
+      {
+        text: 'Create blog',
+        path: `/${path.ADMIN}/${path.CREATE_BLOG}`
+      },
+      {
+        text: 'Manage blogs',
+        path: `/${path.ADMIN}/${path.MANAGE_BLOGS}`
+      }
+    ]
+  },
+  {
+    id: 5,
     type: 'SINGLE',
     text: 'Manage orders',
     path: `/${path.ADMIN}/${path.MANAGE_ORDER}`,
     icon: <RiBillLine size={20} />
+  },
+  {
+    id: 6,
+    type: 'SINGLE',
+    text: 'Manage Custom Product',
+    path: `/${path.ADMIN}/${path.MANAGE_CUSTOM_PRODUCT}`,
+    icon: <RiBillLine size={20} />
+  },
+  {
+    id: 7,
+    type: 'SINGLE',
+    text: 'Manage Variant Product',
+    path: `/${path.ADMIN}/${path.MANAGE_VARIANT}`,
+    icon: <RiBillLine size={20} />
   }
 ]
+
 export const memberSidebar = [
   {
     id: 1,

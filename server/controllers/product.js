@@ -204,7 +204,7 @@ const uploadImagesProduct = asyncHandler(async (req, res) => {
 });
 const addVariant = asyncHandler(async (req, res) => {
   const { pid } = req.params;
-  const { title, price, color } = req.body;
+  const { title, price, color, proId } = req.body;
   const thumb = req?.files?.thumb[0]?.path;
   const images = req.files?.images?.map((el) => el.path);
   if (!(title && price && color)) throw new Error("Missing inputs");
@@ -219,6 +219,7 @@ const addVariant = asyncHandler(async (req, res) => {
           thumb,
           images,
           sku: makeSku().toUpperCase(),
+          proId: pid,
         },
       },
     },
@@ -230,6 +231,61 @@ const addVariant = asyncHandler(async (req, res) => {
   });
 });
 
+const updateVariant = asyncHandler(async (req, res) => {
+  const { pid } = req.params;
+  const { sku, title, color, price } = req.body;
+
+  const thumb = req?.files?.thumb[0]?.path;
+  const images = req.files?.images?.map((el) => el.path);
+  const variantProduct = await Product.findById(pid);
+  const alreadyVariant = variantProduct?.variants?.find(
+    (el) => el.sku.toString() === sku
+  );
+  if (alreadyVariant) {
+    const response = await Product.updateOne(
+      {
+        variants: { $elemMatch: alreadyVariant },
+      },
+      {
+        $set: {
+          "variants.$.title": title,
+          "variants.$.color": color,
+          "variants.$.price": price,
+          "variants.$.thumb": thumb,
+          "variants.$.images": images,
+        },
+      },
+      { new: true }
+    );
+    return res.status(200).json({
+      success: response ? true : false,
+      mes: response ? "Successfully" : "Something went wrong",
+    });
+  }
+});
+
+const deletaVariant = asyncHandler(async (req, res) => {
+  const { vid, pid, color } = req.params;
+  const variantProduct = await Product.findById(pid);
+  const alreadyVariant = variantProduct?.variants?.find(
+    (el) => el._id.toString() === vid && el.color === color
+  );
+  if (alreadyVariant) {
+    const response = await Product.findByIdAndUpdate(
+      pid,
+      {
+        $pull: {
+          variants: { color },
+        },
+      },
+      { new: true }
+    );
+    return res.status(200).json({
+      success: response ? true : false,
+      mes: response ? "Successfully" : "Something went wrong",
+    });
+  }
+});
 module.exports = {
   createProduct,
   getProduct,
@@ -239,4 +295,6 @@ module.exports = {
   ratings,
   uploadImagesProduct,
   addVariant,
+  updateVariant,
+  deletaVariant,
 };

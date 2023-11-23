@@ -1,13 +1,19 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { createSearchParams, useParams } from 'react-router-dom'
-import { apiGetProduct, apiGetProducts, apiUpdateCart } from '../../apis'
+import {
+  apiGetProduct,
+  apiGetProducts,
+  apiUpdateCart,
+  apiUserCustom
+} from '../../apis'
 import {
   Breadcrumb,
   Button,
   SelectQuantity,
   ProductExtraInfoItem,
   ProductInfomation,
-  CustomSlider
+  CustomSlider,
+  InputForm
 } from '../../components'
 import Slider from 'react-slick'
 import ReactImageMagnify from 'react-image-magnify'
@@ -25,6 +31,8 @@ import { toast } from 'react-toastify'
 import Swal from 'sweetalert2'
 import withBaseComponent from 'hocs/withBaseComponent'
 import path from 'ultils/path'
+import { FcCustomerSupport } from 'react-icons/fc'
+import useDebounce from 'hooks/useDebounce'
 
 const settings = {
   dots: false,
@@ -34,17 +42,26 @@ const settings = {
   slidesToScroll: 1
 }
 
-const DetailProduct = ({ isQuickView, data, navigate, location, dispatch }) => {
+const DetailProduct = ({
+  isQuickView,
+  data,
+  navigate,
+  location,
+  dispatch,
+  loading = false
+}) => {
   const params = useParams()
   const titleRef = useRef()
   const { current } = useSelector((state) => state.user)
   const [product, setProduct] = useState(null)
   const [quantity, setQuantity] = useState(1)
   const [currentImage, setCurrentImage] = useState(null)
+  const [valueCustomProduct, setvalueCustomProduct] = useState('')
   const [relatedProducts, setRelatedProducts] = useState(null)
   const [update, setUpdate] = useState(false)
   const [variant, setVariant] = useState(null)
   const [category, setCategory] = useState(null)
+  const [isShowCustom, setIsShowCustom] = useState(null)
   const [pid, setPid] = useState(null)
   const [currentProduct, setCurrentProduct] = useState({
     title: '',
@@ -53,7 +70,6 @@ const DetailProduct = ({ isQuickView, data, navigate, location, dispatch }) => {
     price: '',
     color: ''
   })
-
   useEffect(() => {
     if (data) {
       setPid(data.pid)
@@ -90,7 +106,6 @@ const DetailProduct = ({ isQuickView, data, navigate, location, dispatch }) => {
       })
     }
   }, [variant, product])
-
   const fetchProducts = async () => {
     const response = await apiGetProducts({ category })
     if (response.success) setRelatedProducts(response.products)
@@ -136,6 +151,7 @@ const DetailProduct = ({ isQuickView, data, navigate, location, dispatch }) => {
     e.stopPropagation()
     setCurrentImage(el)
   }
+
   const handleAddToCart = async () => {
     if (!current)
       return Swal.fire({
@@ -154,6 +170,7 @@ const DetailProduct = ({ isQuickView, data, navigate, location, dispatch }) => {
             }).toString()
           })
       })
+
     const response = await apiUpdateCart({
       pid,
       color: currentProduct.color || product?.color,
@@ -167,7 +184,19 @@ const DetailProduct = ({ isQuickView, data, navigate, location, dispatch }) => {
       dispatch(getCurrent())
     } else toast.error(response.mes)
   }
-  // console.log({ currentProduct, currentImage })
+
+  const customProduct = useDebounce(valueCustomProduct, 1500)
+  const handleAddToMyCart = async () => {
+    const response = await apiUserCustom({
+      pid,
+      note: customProduct
+    })
+    if (response.success) {
+      toast.success(response.mes)
+      dispatch(getCurrent())
+    } else toast.error(response.mes)
+  }
+  console.log(current)
   return (
     <div className={clsx('w-full')}>
       {!isQuickView && (
@@ -314,18 +343,45 @@ const DetailProduct = ({ isQuickView, data, navigate, location, dispatch }) => {
               ))}
             </div>
           </div>
+
           <div className="flex flex-col gap-8">
-            <div className="flex items-center gap-4">
-              <span className="font-semibold">Quantity</span>
-              <SelectQuantity
-                quantity={quantity}
-                handleQuantity={handleQuantity}
-                handleChangeQuantity={handleChangeQuantity}
-              />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <span className="font-semibold">Quantity</span>
+                <SelectQuantity
+                  quantity={quantity}
+                  handleQuantity={handleQuantity}
+                  handleChangeQuantity={handleChangeQuantity}
+                />
+              </div>
+              <div className="cursor-pointer relative">
+                {isShowCustom && (
+                  <div class="absolute  bottom-0 right-[28px] w-full bg-white shadow-md rounded-md min-w-[200px] h-[100px]">
+                    <textarea
+                      className="peer h-full min-h-[100px] w-full resize-none rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-4 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-pink-500 focus:border-t-transparent focus:outline-0 disabled:resize-none disabled:border-0 disabled:bg-blue-gray-50"
+                      onChange={(e) => setvalueCustomProduct(e.target.value)}
+                    />
+
+                    <label class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight text-blue-gray-400 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-pink-500 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:border-pink-500 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:border-pink-500 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                      Custom
+                    </label>
+                  </div>
+                )}
+                <span onClick={() => setIsShowCustom((prev) => !prev)}>
+                  <FcCustomerSupport size={30} />
+                </span>
+              </div>
             </div>
-            <Button handleOnclick={handleAddToCart} fw>
-              Add to Cart
-            </Button>
+
+            {valueCustomProduct ? (
+              <Button handleOnclick={handleAddToMyCart} fw>
+                Add to My Custom Cart
+              </Button>
+            ) : (
+              <Button handleOnclick={handleAddToCart} fw>
+                Add to Cart
+              </Button>
+            )}
           </div>
         </div>
         {!isQuickView && (

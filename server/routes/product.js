@@ -22,6 +22,15 @@ router.put(
   ctrls.uploadImagesProduct
 );
 router.put(
+  "/updateVariant/:pid",
+  [verifyAccessToken, isAdmin],
+  uploader.fields([
+    { name: "images", maxCount: 10 },
+    { name: "thumb", maxCount: 1 },
+  ]),
+  ctrls.updateVariant
+);
+router.put(
   "/variant/:pid",
   [verifyAccessToken, isAdmin],
   uploader.fields([
@@ -30,6 +39,7 @@ router.put(
   ]),
   ctrls.addVariant
 );
+
 router.put(
   "/:pid",
   [verifyAccessToken, isAdmin],
@@ -40,6 +50,11 @@ router.put(
   ctrls.updateProduct
 );
 
+router.delete(
+  "/deleteVariant/:pid/:vid/:color",
+  [verifyAccessToken, isAdmin],
+  ctrls.deletaVariant
+);
 router.delete("/:pid", [verifyAccessToken, isAdmin], ctrls.deleteProduct);
 router.get("/:pid", ctrls.getProduct);
 module.exports = router;

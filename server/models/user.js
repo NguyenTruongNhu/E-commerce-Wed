@@ -44,6 +44,22 @@ var userSchema = new mongoose.Schema(
         title: String,
       },
     ],
+
+    userCustomProduct: [
+      {
+        ischeck: {
+          type: Boolean,
+          default: true,
+        },
+        product: {
+          type: mongoose.Types.ObjectId,
+          ref: "Product",
+        },
+        note: {
+          type: String,
+        },
+      },
+    ],
     address: String,
     wishlist: [{ type: mongoose.Types.ObjectId, ref: "Product" }],
     isBlocked: {

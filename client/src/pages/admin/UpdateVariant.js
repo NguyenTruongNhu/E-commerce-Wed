@@ -1,20 +1,14 @@
-import Button from 'components/buttons/Button'
-import InputForm from 'components/inputs/InputForm'
-import React, { memo, useEffect, useState } from 'react'
+import { apiUpdateVariant } from 'apis'
+import { Button, InputForm, Loading } from 'components'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { toast } from 'react-toastify'
-import { getBase64 } from 'ultils/helper'
-import { apiAddVariant } from 'apis'
-import Swal from 'sweetalert2'
-import { showModal } from 'store/app/appSlice'
 import { useDispatch } from 'react-redux'
-import Loading from 'components/common/Loading'
+import { toast } from 'react-toastify'
+import { showModal } from 'store/app/appSlice'
+import Swal from 'sweetalert2'
+import { getBase64 } from 'ultils/helper'
 
-const CustomizeVariant = ({
-  setCustomizeVariant,
-  customizeVariant,
-  render
-}) => {
+const UpdateVariant = ({ setEditVariant, editVariant, render }) => {
   const {
     register,
     formState: { errors },
@@ -27,37 +21,39 @@ const CustomizeVariant = ({
     thumb: '',
     images: []
   })
-
   useEffect(() => {
     reset({
-      title: customizeVariant?.title,
-      color: customizeVariant?.color,
-      price: customizeVariant?.price
+      title: editVariant?.title,
+      color: editVariant?.color,
+      price: editVariant?.price,
+      sku: editVariant?.sku
     })
-  }, [customizeVariant])
-  console.log(customizeVariant)
+    setPreview({
+      thumb: editVariant?.thumb || '',
+      images: editVariant?.images || []
+    })
+  }, [editVariant])
+  const handleEditVariant = async (data) => {
+    const finalPayload = { ...data }
+    finalPayload.thumb =
+      data?.thumb?.length === 0 ? preview.thumb : data.thumb[0]
 
-  const handleAddVariant = async (data) => {
-    if (data.color === customizeVariant.color)
-      Swal.fire('Oops!', 'Color not changed', 'info')
-    else {
-      const formData = new FormData()
-      for (let i of Object.entries(data)) formData.append(i[0], i[1])
+    const formData = new FormData()
+    for (let i of Object.entries(finalPayload)) formData.append(i[0], i[1])
+    finalPayload.images =
+      data?.images?.length === 0 ? preview.images : data.images
+    for (let image of finalPayload.images) formData.append('images', image)
 
-      if (data.thumb) formData.append('thumb', data.thumb[0])
-      if (data.images) {
-        for (let image of data.images) formData.append('images', image)
-      }
-      dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }))
-      const response = await apiAddVariant(formData, customizeVariant._id)
-      dispatch(showModal({ isShowModal: false, modalChildren: null }))
-      if (response.success) {
-        toast.success(response.mes)
-        reset()
-        setPreview({ thumb: '', images: [] })
-      } else {
-        toast.error(response.mes)
-      }
+    dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }))
+    const response = await apiUpdateVariant(finalPayload, editVariant.proId)
+    dispatch(showModal({ isShowModal: false, modalChildren: null }))
+    if (response.success) {
+      toast.success(response.mes)
+      render()
+      setPreview({ thumb: '', images: [] })
+      setEditVariant(null)
+    } else {
+      toast.error(response.mes)
     }
   }
   const handlePreviewThumb = async (file) => {
@@ -77,7 +73,6 @@ const CustomizeVariant = ({
     if (imagesPreview.length > 0)
       setPreview((prev) => ({ ...prev, images: imagesPreview }))
   }
-
   useEffect(() => {
     if (watch('thumb') instanceof FileList && watch('thumb').length > 0) {
       handlePreviewThumb(watch('thumb')[0])
@@ -97,13 +92,13 @@ const CustomizeVariant = ({
         </h1>
         <span
           className="text-main hover:underline cursor-pointer"
-          onClick={() => setCustomizeVariant(null)}
+          onClick={() => setEditVariant(null)}
         >
           Back
         </span>
       </div>
       <form
-        onSubmit={handleSubmit(handleAddVariant)}
+        onSubmit={handleSubmit(handleEditVariant)}
         className="p-4 w-full flex flex-col gap-4"
       >
         <div className="flex gap-4 items-center w-full">
@@ -118,6 +113,15 @@ const CustomizeVariant = ({
               required: 'Need fill this field'
             }}
             placeholder="Title of variant"
+          />
+          <InputForm
+            label="Sku"
+            register={register}
+            errors={errors}
+            id="sku"
+            fullwidth
+            style="flex-auto"
+            placeholder="Sku of variant"
           />
         </div>
 
@@ -193,11 +197,11 @@ const CustomizeVariant = ({
           </div>
         )}
         <div className="my-8">
-          <Button type="submit">Add variant</Button>
+          <Button type="submit">Update variant</Button>
         </div>
       </form>
     </div>
   )
 }
 
-export default memo(CustomizeVariant)
+export default UpdateVariant
