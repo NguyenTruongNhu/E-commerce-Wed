@@ -187,6 +187,23 @@ const DetailProduct = ({
 
   const customProduct = useDebounce(valueCustomProduct, 1500)
   const handleAddToMyCart = async () => {
+    if (!current)
+      return Swal.fire({
+        title: 'Almost...',
+        text: 'Please login first!',
+        icon: 'info',
+        cancelButtonText: 'Not now!',
+        showCancelButton: true,
+        confirmButtonText: 'Go login page'
+      }).then((rs) => {
+        if (rs.isConfirmed)
+          navigate({
+            pathname: `/${path.LOGIN}`,
+            search: createSearchParams({
+              redirect: location.pathname
+            }).toString()
+          })
+      })
     const response = await apiUserCustom({
       pid,
       note: customProduct
@@ -367,7 +384,7 @@ const DetailProduct = ({
                     </label>
                   </div>
                 )}
-                <span onClick={() => setIsShowCustom((prev) => !prev)}>
+                <span onClick={() => setIsShowCustom(!isShowCustom)}>
                   <FcCustomerSupport size={30} />
                 </span>
               </div>

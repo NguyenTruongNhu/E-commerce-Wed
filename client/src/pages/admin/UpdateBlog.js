@@ -21,8 +21,7 @@ const UpdateBlog = ({ editBlog, render, setEditBlog }) => {
     description: ''
   })
   const [preview, setPreview] = useState({
-    thumb: null,
-    images: []
+    photo: null
   })
 
   useEffect(() => {

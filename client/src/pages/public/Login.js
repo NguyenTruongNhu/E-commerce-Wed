@@ -138,11 +138,12 @@ const Login = () => {
             />
             <div className="flex items-center justify-end w-full gap-4">
               <Button
-                name="Back"
                 style="px-4 py-2 rounded-md text-white bg-blue-500 text-semibold my-2"
                 handleOnclick={() => setIsForgotPassword(false)}
-              />
-              <Button name="Submit" handleOnclick={handleForgotPassword} />
+              >
+                Back
+              </Button>
+              <Button handleOnclick={handleForgotPassword}>Submit</Button>
             </div>
           </div>
         </div>

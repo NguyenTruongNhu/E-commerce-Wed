@@ -51,6 +51,11 @@ var userSchema = new mongoose.Schema(
           type: Boolean,
           default: true,
         },
+        status: {
+          type: String,
+          default: "Processing",
+          enum: ["Processing", "Succeed"],
+        },
         product: {
           type: mongoose.Types.ObjectId,
           ref: "Product",

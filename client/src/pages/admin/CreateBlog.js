@@ -51,7 +51,6 @@ const CreateBlog = () => {
 
       dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }))
       const response = await apiCreateBlog(formData)
-      console.log(response)
       dispatch(showModal({ isShowModal: false, modalChildren: null }))
       if (response.success) {
         toast.success(response.mes)

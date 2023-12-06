@@ -47,37 +47,28 @@ const getUserOrders = asyncHandler(async (req, res) => {
     (matchedEl) => `$${matchedEl}`
   );
   const formatedQueries = JSON.parse(queryString);
-  // let colorQueryObject = {};
-  // if (queries?.title) {
-  //   formatedQueries.title = { $regex: queries.title, $options: "i" };
-  // }
-  // if (queries?.category) {
-  //   formatedQueries.category = { $regex: queries.category, $options: "i" };
-  // }
-  // if (queries?.color) {
-  //   delete formatedQueries.color;
-  //   const colorArr = queries.color?.split(",");
-  //   const colorQuery = colorArr.map((el) => ({
-  //     color: { $regex: el, $options: "i" },
-  //   }));
-  //   colorQueryObject = { $or: colorQuery };
-  // }
+  if (queries?.title) {
+    formatedQueries.title = { $regex: queries.title, $options: "i" };
+  }
+  if (queries?.category) {
+    formatedQueries.category = { $regex: queries.category, $options: "i" };
+  }
 
-  // let queryObject = {};
-  // if (queries?.q) {
-  //   delete formatedQueries.q;
-  //   queryObject = {
-  //     $or: [
-  //       { color: { $regex: queries.q, $options: "i" } },
-  //       { title: { $regex: queries.q, $options: "i" } },
-  //       { category: { $regex: queries.q, $options: "i" } },
-  //       { brand: { $regex: queries.q, $options: "i" } },
-  //       { description: { $regex: queries.q, $options: "i" } },
-  //     ],
-  //   };
-  // }
+  let queryObject = {};
+  if (queries?.q) {
+    delete formatedQueries.q;
+    queryObject = {
+      $or: [
+        { color: { $regex: queries.q, $options: "i" } },
+        { title: { $regex: queries.q, $options: "i" } },
+        { category: { $regex: queries.q, $options: "i" } },
+        { brand: { $regex: queries.q, $options: "i" } },
+        { description: { $regex: queries.q, $options: "i" } },
+      ],
+    };
+  }
 
-  const qr = { ...formatedQueries, orderBy: _id };
+  const qr = { ...formatedQueries, orderBy: _id, ...queryObject };
 
   let queryCommand = Order.find(qr);
 
@@ -121,39 +112,33 @@ const getOrders = asyncHandler(async (req, res) => {
     (matchedEl) => `$${matchedEl}`
   );
   const formatedQueries = JSON.parse(queryString);
-  // let colorQueryObject = {};
-  // if (queries?.title) {
-  //   formatedQueries.title = { $regex: queries.title, $options: "i" };
-  // }
-  // if (queries?.category) {
-  //   formatedQueries.category = { $regex: queries.category, $options: "i" };
-  // }
-  // if (queries?.color) {
-  //   delete formatedQueries.color;
-  //   const colorArr = queries.color?.split(",");
-  //   const colorQuery = colorArr.map((el) => ({
-  //     color: { $regex: el, $options: "i" },
-  //   }));
-  //   colorQueryObject = { $or: colorQuery };
-  // }
+  if (queries?.title) {
+    formatedQueries.title = { $regex: queries.title, $options: "i" };
+  }
+  if (queries?.category) {
+    formatedQueries.category = { $regex: queries.category, $options: "i" };
+  }
 
-  // let queryObject = {};
-  // if (queries?.q) {
-  //   delete formatedQueries.q;
-  //   queryObject = {
-  //     $or: [
-  //       { color: { $regex: queries.q, $options: "i" } },
-  //       { title: { $regex: queries.q, $options: "i" } },
-  //       { category: { $regex: queries.q, $options: "i" } },
-  //       { brand: { $regex: queries.q, $options: "i" } },
-  //       { description: { $regex: queries.q, $options: "i" } },
-  //     ],
-  //   };
-  // }
+  let queryObject = {};
+  if (queries?.q) {
+    delete formatedQueries.q;
+    queryObject = {
+      $or: [
+        { color: { $regex: queries.q, $options: "i" } },
+        { title: { $regex: queries.q, $options: "i" } },
+        { category: { $regex: queries.q, $options: "i" } },
+        { brand: { $regex: queries.q, $options: "i" } },
+        { description: { $regex: queries.q, $options: "i" } },
+      ],
+    };
+  }
 
-  const qr = { ...formatedQueries };
+  const qr = { ...formatedQueries, ...queryObject };
 
-  let queryCommand = Order.find(qr);
+  let queryCommand = Order.find(qr).populate(
+    "orderBy",
+    "firstname lastname mobile address"
+  );
 
   //Sorting
   if (req.query.sort) {

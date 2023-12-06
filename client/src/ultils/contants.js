@@ -206,6 +206,38 @@ export const adminSidebar = [
   {
     id: 3,
     type: 'PARENT',
+    text: 'Manage categories',
+    icon: <TbBrandProducthunt size={20} />,
+    submenu: [
+      {
+        text: 'Create categories',
+        path: `/${path.ADMIN}/${path.CREATE_CATEGORY}`
+      },
+      {
+        text: 'Manage categories',
+        path: `/${path.ADMIN}/${path.MANAGE_CATEGORY}`
+      }
+    ]
+  },
+  {
+    id: 4,
+    type: 'PARENT',
+    text: 'Manage brand',
+    icon: <TbBrandProducthunt size={20} />,
+    submenu: [
+      {
+        text: 'Create brand',
+        path: `/${path.ADMIN}/${path.CREATE_BRAND}`
+      },
+      {
+        text: 'Manage brand',
+        path: `/${path.ADMIN}/${path.MANAGE_BRAND}`
+      }
+    ]
+  },
+  {
+    id: 5,
+    type: 'PARENT',
     text: 'Manage products',
     icon: <TbBrandProducthunt size={20} />,
     submenu: [
@@ -220,7 +252,7 @@ export const adminSidebar = [
     ]
   },
   {
-    id: 4,
+    id: 6,
     type: 'PARENT',
     text: 'Manage blogs',
     icon: <TbBrandProducthunt size={20} />,
@@ -236,21 +268,21 @@ export const adminSidebar = [
     ]
   },
   {
-    id: 5,
+    id: 7,
     type: 'SINGLE',
     text: 'Manage orders',
     path: `/${path.ADMIN}/${path.MANAGE_ORDER}`,
     icon: <RiBillLine size={20} />
   },
   {
-    id: 6,
+    id: 8,
     type: 'SINGLE',
     text: 'Manage Custom Product',
     path: `/${path.ADMIN}/${path.MANAGE_CUSTOM_PRODUCT}`,
     icon: <RiBillLine size={20} />
   },
   {
-    id: 7,
+    id: 9,
     type: 'SINGLE',
     text: 'Manage Variant Product',
     path: `/${path.ADMIN}/${path.MANAGE_VARIANT}`,

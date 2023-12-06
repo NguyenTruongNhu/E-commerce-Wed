@@ -23,7 +23,11 @@ import {
   CreateBlog,
   ManageBlog,
   ManageCustomProduct,
-  ManageVariant
+  ManageVariant,
+  ManageCategories,
+  ManageBrand,
+  CreateBrand,
+  CreateCategory
 } from 'pages/admin'
 import {
   MemberLayout,
@@ -84,10 +88,14 @@ function App() {
           <Route path={path.MANAGE_ORDER} element={<ManageOrder />} />
           <Route path={path.MANAGE_PRODUCTS} element={<ManageProduct />} />
           <Route path={path.MANAGE_USER} element={<ManageUser />} />
-          <Route path={path.CREATE_PRODUCT} element={<CreateProduct />} />
-          <Route path={path.CREATE_BLOG} element={<CreateBlog />} />
+          <Route path={path.MANAGE_CATEGORY} element={<ManageCategories />} />
+          <Route path={path.MANAGE_BRAND} element={<ManageBrand />} />
           <Route path={path.MANAGE_BLOGS} element={<ManageBlog />} />
           <Route path={path.MANAGE_VARIANT} element={<ManageVariant />} />
+          <Route path={path.CREATE_PRODUCT} element={<CreateProduct />} />
+          <Route path={path.CREATE_BLOG} element={<CreateBlog />} />
+          <Route path={path.CREATE_BRAND} element={<CreateBrand />} />
+          <Route path={path.CREATE_CATEGORY} element={<CreateCategory />} />
           <Route
             path={path.MANAGE_CUSTOM_PRODUCT}
             element={<ManageCustomProduct />}

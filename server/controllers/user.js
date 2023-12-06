@@ -346,7 +346,6 @@ const updateUserAddress = asyncHandler(async (req, res) => {
 const userCustomProduct = asyncHandler(async (req, res) => {
   const { _id } = req.user;
   const { pid, note } = req.body;
-  console.log({ pid, note });
   if (!pid) throw new Error("Mising inputs");
   const customProduct = await User.findById(_id).select("userCustomProduct");
   const alreadyCustomProduct = customProduct?.userCustomProduct?.find(
@@ -354,7 +353,7 @@ const userCustomProduct = asyncHandler(async (req, res) => {
   );
   if (alreadyCustomProduct) {
     // updates star & comment
-    await User.updateOne(
+    const response = await User.updateOne(
       {
         userCustomProduct: { $elemMatch: alreadyCustomProduct },
       },
@@ -365,19 +364,6 @@ const userCustomProduct = asyncHandler(async (req, res) => {
       },
       { new: true }
     );
-    return res.status(200).json({
-      success: response ? true : false,
-      mes: response ? "Successfully" : "Something went wrong",
-    });
-  } else {
-    const response = await User.findByIdAndUpdate(
-      _id,
-      {
-        $push: { userCustomProduct: { product: pid, note } },
-      },
-      { new: true }
-    );
-    console.log(response);
     return res.status(200).json({
       success: response ? true : false,
       mes: response ? "Successfully" : "Something went wrong",

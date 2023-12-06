@@ -23,7 +23,7 @@ const updateBlog = asyncHandler(async (req, res) => {
   const response = await Blog.findByIdAndUpdate(bid, req.body, { new: true });
   return res.status(200).json({
     success: response ? true : false,
-    mes: response ? response : "Cannot update blog",
+    mes: response ? "Updated." : "Cannot update blog",
   });
 });
 const getBlogs = asyncHandler(async (req, res) => {
