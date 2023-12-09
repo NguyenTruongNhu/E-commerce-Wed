@@ -1,8 +1,12 @@
-import { Button, InputForm, Select } from 'components'
+import { apiUpdateBrand } from 'apis'
+import { Button, InputForm, Loading, Select } from 'components'
+import withBaseComponent from 'hocs/withBaseComponent'
 import React from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'react-toastify'
+import { showModal } from 'store/app/appSlice'
 
-const UpdateBrand = ({ setEditBrand, editBrand, render }) => {
+const UpdateBrand = ({ setEditBrand, editBrand, render, dispatch }) => {
   const {
     register,
     formState: { errors },
@@ -10,8 +14,25 @@ const UpdateBrand = ({ setEditBrand, editBrand, render }) => {
     watch,
     handleSubmit
   } = useForm()
-  const handleUpdateBrand = (data) => {
-    console.log(data)
+  window.scrollTo(0, 0)
+  const handleUpdateBrand = async (data) => {
+    const updatedIdx = editBrand.brand.findIndex(
+      (item) => item.toLowerCase() === data.brand
+    )
+
+    const newBrands = JSON.parse(JSON.stringify(editBrand.brand))
+    newBrands.splice(updatedIdx, 1, data.editBrand)
+
+    dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }))
+    const response = await apiUpdateBrand(newBrands, editBrand._id)
+    dispatch(showModal({ isShowModal: false, modalChildren: null }))
+    if (response.success) {
+      toast.success(response.mes)
+      render()
+      setEditBrand(null)
+    } else {
+      toast.error(response.mes)
+    }
   }
   return (
     <div className="w-full  flex flex-col gap-4 relative">
@@ -64,4 +85,4 @@ const UpdateBrand = ({ setEditBrand, editBrand, render }) => {
   )
 }
 
-export default UpdateBrand
+export default withBaseComponent(UpdateBrand)

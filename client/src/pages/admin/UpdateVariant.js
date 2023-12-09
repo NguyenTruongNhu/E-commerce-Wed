@@ -47,10 +47,10 @@ const UpdateVariant = ({ setEditVariant, editVariant, render }) => {
     dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }))
     const response = await apiUpdateVariant(finalPayload, editVariant.proId)
     dispatch(showModal({ isShowModal: false, modalChildren: null }))
+
     if (response.success) {
       toast.success(response.mes)
       render()
-      setPreview({ thumb: '', images: [] })
       setEditVariant(null)
     } else {
       toast.error(response.mes)

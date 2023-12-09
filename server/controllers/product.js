@@ -78,7 +78,6 @@ const getProducts = asyncHandler(async (req, res) => {
       ],
     };
   }
-
   const qr = { ...colorQueryObject, ...formatedQueries, ...queryObject };
 
   let queryCommand = Product.find(qr);

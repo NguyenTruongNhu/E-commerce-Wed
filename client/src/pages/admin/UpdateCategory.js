@@ -48,6 +48,7 @@ const UpdateCategory = ({ setEditCategory, editCategory, render }) => {
 
     if (response.success) {
       toast.success(response.mes)
+      render()
       setEditCategory(null)
     } else {
       toast.error(response.mes)

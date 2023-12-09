@@ -14,8 +14,9 @@ import UpdateProduct from './UpdateProduct'
 import Swal from 'sweetalert2'
 import { toast } from 'react-toastify'
 import icons from 'ultils/icons'
+import AllProduct from './AllProduct'
 
-const { BiCustomize, BiEdit, RiDeleteBin6Line } = icons
+const { BiCustomize, BiEdit, RiDeleteBin6Line, RiHeavyShowersLine } = icons
 
 const ManageProduct = () => {
   const navigate = useNavigate()
@@ -30,6 +31,7 @@ const ManageProduct = () => {
   const [counts, setCounts] = useState(0)
   const [editProduct, setEditProduct] = useState(null)
   const [update, setUpdate] = useState(false)
+  const [allProduct, setAllProduct] = useState(null)
   const [customizeVariant, setCustomizeVariant] = useState(null)
 
   const render = useCallback(() => {
@@ -82,12 +84,21 @@ const ManageProduct = () => {
     })
   }
   return (
-    <div className="w-full  flex flex-col gap-4 relative">
+    <div className="w-full  flex flex-col gap-4  relative">
       {editProduct && (
-        <div className="absolute inset-0 min-h-screen bg-gray-100 z-50">
+        <div className="absolute inset-0 h-fit bg-gray-100 z-50">
           <UpdateProduct
             setEditProduct={setEditProduct}
             editProduct={editProduct}
+            render={render}
+          />
+        </div>
+      )}
+      {allProduct && (
+        <div className="absolute inset-0 h-fit bg-gray-100 z-50">
+          <AllProduct
+            setAllProduct={setAllProduct}
+            allProduct={allProduct}
             render={render}
           />
         </div>
@@ -180,6 +191,12 @@ const ManageProduct = () => {
                   className="text-blue-500 hover:text-orange-500 hover:underline inline-block cursor-pointer px-1"
                 >
                   <BiCustomize size={20} />
+                </span>
+                <span
+                  onClick={() => setAllProduct(el)}
+                  className="text-blue-500 hover:text-orange-500 hover:underline inline-block cursor-pointer px-1"
+                >
+                  <RiHeavyShowersLine size={20} />
                 </span>
               </td>
             </tr>

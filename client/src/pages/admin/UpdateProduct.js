@@ -118,7 +118,7 @@ const UpdateProduct = ({ editProduct, render, setEditProduct }) => {
   return (
     <div className="w-full  flex flex-col gap-4 relative">
       <div className="h-[69px] w-full"></div>
-      <div className="p-4 border-b flex bg-gray-100 justify-between items-center right-0 left-[327px] fixed top-0">
+      <div className="p-4 border-b flex bg-gray-100 justify-between items-center right-0 left-[327px] fixed top-0 z-10">
         <h1 className="text-3xl font-bold tracking-tight">Update products</h1>
         <span
           className="text-main hover:underline cursor-pointer"

@@ -108,12 +108,12 @@ const ManageOrder = ({ navigate, location }) => {
                   ))}
                 </span>
               </td>
-              <td className="text-center py-2">{`${el.orderBy.firstname} ${el.orderBy.lastname}`}</td>
+              <td className="text-center py-2">{`${el?.orderBy?.firstname} ${el?.orderBy?.lastname}`}</td>
 
-              <td className="text-center py-2">{el.orderBy.mobile}</td>
-              <td className="text-center py-2">{el.orderBy.address}</td>
-              <td className="text-center py-2">{el.status}</td>
-              <td className="text-center py-2">{el.total + '💲'}</td>
+              <td className="text-center py-2">{el?.orderBy?.mobile}</td>
+              <td className="text-center py-2">{el?.orderBy?.address}</td>
+              <td className="text-center py-2">{el?.status}</td>
+              <td className="text-center py-2">{el?.total + '💲'}</td>
               <td className="text-center py-2">
                 {moment(el.createdAt)?.format('DD/MM/YYYY')}
               </td>

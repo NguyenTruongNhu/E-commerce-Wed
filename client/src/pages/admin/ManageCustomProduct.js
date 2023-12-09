@@ -104,9 +104,9 @@ const ManageCustomProduct = ({ navigate, location }) => {
               </td>
 
               <td className="text-center py-2">{`${el.firstname} ${el.lastname}`}</td>
-              <td key={index} className="text-center py-2">
+              <td className="text-center py-2">
                 {el.userCustomProduct?.map((item, index) => (
-                  <span className="flex gap-2 justify-center p-2">
+                  <span key={index} className="flex gap-2 justify-center p-2">
                     <span className="text-main">{`${item.product.title}:`}</span>
                     <span className="flex">{item.note}</span>
                   </span>

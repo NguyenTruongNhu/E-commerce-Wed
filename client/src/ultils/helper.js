@@ -1,47 +1,47 @@
-import icons from "./icons";
+import icons from './icons'
 
-const { AiFillStar, AiOutlineStar } = icons;
+const { AiFillStar, AiOutlineStar } = icons
 
 export const createSlug = (string) =>
   string
     .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .split(" ")
-    .join("-");
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .split(' ')
+    .join('-')
 
 export const formatMoney = (number) =>
-  Number(number?.toFixed(1)).toLocaleString();
+  Number(number?.toFixed(1)).toLocaleString()
 
 export const renderStarFromNumber = (number, size) => {
-  if (!Number(number)) return;
-  const stars = [];
+  if (!Number(number)) return
+  const stars = []
   for (let i = 0; i < +number; i++)
-    stars.push(<AiFillStar color="orange" size={size || 16} />);
+    stars.push(<AiFillStar color="orange" size={size || 16} />)
   for (let i = 5; i > +number; i--)
-    stars.push(<AiOutlineStar color="orange" size={size || 16} />);
-  return stars;
-};
+    stars.push(<AiOutlineStar color="orange" size={size || 16} />)
+  return stars
+}
 
 export function secondsToHms(d) {
-  d = Number(d) / 1000;
-  const h = Math.floor(d / 3600);
-  const m = Math.floor((d % 3600) / 60);
-  const s = Math.floor((d % 3600) % 60);
+  d = Number(d) / 1000
+  const h = Math.floor(d / 3600)
+  const m = Math.floor((d % 3600) / 60)
+  const s = Math.floor((d % 3600) % 60)
 
-  return { h, m, s };
+  return { h, m, s }
 }
 
 export const validate = (payload, setInvalidFields) => {
-  let invalids = 0;
-  const formatPayload = Object.entries(payload);
+  let invalids = 0
+  const formatPayload = Object.entries(payload)
   for (let arr of formatPayload) {
-    if (arr[1].trim() === "") {
-      invalids++;
+    if (arr[1].trim() === '') {
+      invalids++
       setInvalidFields((pre) => [
         ...pre,
-        { name: arr[0], mes: "Require this field." },
-      ]);
+        { name: arr[0], mes: 'Require this field.' }
+      ])
     }
   }
   // for (let arr of formatPayload) {
@@ -69,22 +69,27 @@ export const validate = (payload, setInvalidFields) => {
   //       break;
   //   }
   // }
-  return invalids;
-};
+  return invalids
+}
 
-export const formatPrice = (number) => Math.round(number / 1000) * 1000;
+export const formatPrice = (number) => Math.round(number / 1000) * 1000
 
 export const generateRange = (start, end) => {
-  const length = end + 1 - start;
-  return Array.from({ length }, (_, index) => start + index);
-};
+  const length = end + 1 - start
+  return Array.from({ length }, (_, index) => start + index)
+}
 
 export function getBase64(file) {
-  if (!file) return "";
+  if (!file) return ''
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = (error) => reject(error);
-  });
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = () => resolve(reader.result)
+    reader.onerror = (error) => reject(error)
+  })
+}
+export function capitalize_Words(str) {
+  return str.replace(/\w\S*/g, function (txt) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+  })
 }

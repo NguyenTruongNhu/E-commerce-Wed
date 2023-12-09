@@ -83,7 +83,7 @@ const ManageBlog = () => {
   return (
     <div className="w-full  flex flex-col gap-4 relative">
       {editBlog && (
-        <div className="absolute inset-0 min-h-screen bg-gray-100 z-50">
+        <div className="absolute inset-0 h-fit bg-gray-100 z-50">
           <UpdateBlog
             setEditBlog={setEditBlog}
             editBlog={editBlog}
@@ -92,8 +92,8 @@ const ManageBlog = () => {
         </div>
       )}
       <div className="h-[69px] w-full"></div>
-      <div className="p-4 border-b w-full flex bg-gray-100 justify-between items-center fixed top-0">
-        <h1 className="text-3xl font-bold tracking-tight">Manage blogs</h1>
+      <div className="p-4 border-b flex bg-gray-100 justify-between items-center right-0 left-[327px] fixed top-0 z-10">
+        <h1 className="text-3xl font-bold tracking-tight">Manage Blogs</h1>
       </div>
       <div className="flex w-full justify-end items-center px-4">
         <form className="w-[45%]">

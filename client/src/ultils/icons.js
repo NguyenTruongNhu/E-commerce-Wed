@@ -2,10 +2,11 @@ import {
   RiPhoneFill,
   RiTruckFill,
   RiBillLine,
-  RiDeleteBin6Line
+  RiDeleteBin6Line,
+  RiHeavyShowersLine
 } from 'react-icons/ri'
 import { IoIosArrowForward } from 'react-icons/io'
-import { MdEmail, MdGroups } from 'react-icons/md'
+import { MdEmail, MdGroups, MdOutlineDeleteSweep } from 'react-icons/md'
 import {
   BsHandbagFill,
   BsFillSuitHeartFill,
@@ -33,6 +34,7 @@ import { BiCustomize, BiEdit } from 'react-icons/bi'
 const icons = {
   RiPhoneFill,
   MdEmail,
+  MdOutlineDeleteSweep,
   BsHandbagFill,
   FaUserCircle,
   AiFillHome,
@@ -58,6 +60,7 @@ const icons = {
   RiDeleteBin6Line,
   BsCartPlus,
   BsFillCartCheckFill,
-  BsFillCartPlusFill
+  BsFillCartPlusFill,
+  RiHeavyShowersLine
 }
 export default icons

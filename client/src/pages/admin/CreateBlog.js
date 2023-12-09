@@ -41,6 +41,7 @@ const CreateBlog = () => {
   }, [watch('photo')])
 
   const handleCreateBlog = async (data) => {
+    window.scrollTo(0, 0)
     const invalids = validate(payload, setInvalidFields)
     if (invalids === 0) {
       const finalPayload = { ...data, ...payload }
@@ -65,10 +66,11 @@ const CreateBlog = () => {
   }
 
   return (
-    <div className="w-full">
-      <h1 className="h-[75px] flex justify-between items-center text-3xl font-bold border-b px-4">
-        <span>Create New Blog</span>
-      </h1>
+    <div className="w-full relative">
+      <div className="h-[69px] w-full"></div>
+      <div className="p-4 border-b flex bg-gray-100 justify-between items-center right-0 left-[327px] fixed top-0 z-10">
+        <h1 className="text-3xl font-bold tracking-tight">Create blog</h1>
+      </div>
       <div className="p-4">
         <form onSubmit={handleSubmit(handleCreateBlog)}>
           <div className="w-full my-6 flex gap-4">

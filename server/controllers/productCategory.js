@@ -12,38 +12,6 @@ const createCategory = asyncHandler(async (req, res) => {
     mes: response ? "Successfully" : "Cannot create new product-category",
   });
 });
-const createBrand = asyncHandler(async (req, res) => {
-  const { brand, category } = req.body;
-  if (!brand) throw new Error("Missing inputs");
-  const response = await ProductCategory.findByIdAndUpdate(
-    category,
-    {
-      $push: {
-        brand: brand,
-      },
-    },
-    { new: true }
-  );
-  return res.status(200).json({
-    success: response ? true : false,
-    mes: response ? "Succesfully" : "Cannot create new Brand",
-  });
-});
-const updateBrand = asyncHandler(async (req, res) => {
-  const { pcid } = req.params;
-  const { brand, editBrand } = req.body;
-  if (!editBrand) throw new Error("Missing inputs");
-  const brandProduct = await ProductCategory.findById(pcid);
-  const alreadyBrand = brandProduct.brand.filter((el) => el === brand);
-  const response = await ProductCategory.findByIdAndUpdate(pcid, req.body, {
-    new: true,
-  });
-  return res.status(200).json({
-    // success: response ? true : false,
-    // mes: response ? response : "Cannot create new Brand",
-    response,
-  });
-});
 
 const getCategories = asyncHandler(async (req, res) => {
   const response = await ProductCategory.find();
@@ -134,7 +102,64 @@ const deleteCategory = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     success: response ? true : false,
-    deletedCategory: response ? response : "Cannot deleted product-category",
+    mes: response ? "Successfully" : "Cannot deleted product-category",
+  });
+});
+
+// Branddd
+const createBrand = asyncHandler(async (req, res) => {
+  const { brand, category } = req.body;
+  if (!brand) throw new Error("Missing inputs");
+  const response = await ProductCategory.findByIdAndUpdate(
+    category,
+    {
+      $push: {
+        brand: brand,
+      },
+    },
+    { new: true }
+  );
+  return res.status(200).json({
+    success: response ? true : false,
+    mes: response ? "Succesfully" : "Cannot create new Brand",
+  });
+});
+const updateBrand = asyncHandler(async (req, res) => {
+  const { pcid } = req.params;
+  const brandProduct = await ProductCategory.findById(pcid);
+  brandProduct.brand = req.body;
+  const response = await ProductCategory.findByIdAndUpdate(pcid, brandProduct, {
+    new: true,
+  });
+  return res.status(200).json({
+    success: response ? true : false,
+    mes: response ? "Successfully" : "Cannot update Brand",
+  });
+});
+const deleteOneBrand = asyncHandler(async (req, res) => {
+  const { pcid } = req.params;
+  console.log({ pcid });
+  const brandProduct = await ProductCategory.findById(pcid);
+  console.log(brandProduct);
+  brandProduct.brand = req.body;
+  const response = await ProductCategory.findByIdAndUpdate(pcid, brandProduct, {
+    new: true,
+  });
+  return res.status(200).json({
+    success: response ? true : false,
+    mes: response ? "Successfully" : "Cannot update Brand",
+  });
+});
+const deleteAllBrand = asyncHandler(async (req, res) => {
+  const { pcid } = req.params;
+  const brandProduct = await ProductCategory.findById(pcid);
+  brandProduct.brand = [];
+  const response = await ProductCategory.findByIdAndUpdate(pcid, brandProduct, {
+    new: true,
+  });
+  return res.status(200).json({
+    success: response ? true : false,
+    mes: response ? "Successfully" : "Cannot update Brand",
   });
 });
 
@@ -146,4 +171,6 @@ module.exports = {
   createBrand,
   updateBrand,
   getCategoriesByAdmin,
+  deleteAllBrand,
+  deleteOneBrand,
 };

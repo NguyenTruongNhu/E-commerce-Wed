@@ -13,7 +13,7 @@ const createNewBlog = asyncHandler(async (req, res) => {
   const response = await Blog.create(req.body);
   return res.status(200).json({
     success: response ? true : false,
-    mes: response ? response : "Cannot create new blog",
+    mes: response ? "Successfully" : "Cannot create new blog",
   });
 });
 const updateBlog = asyncHandler(async (req, res) => {

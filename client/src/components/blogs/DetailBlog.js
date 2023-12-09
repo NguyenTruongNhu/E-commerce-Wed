@@ -11,9 +11,9 @@ import { SlLike, SlDislike } from 'react-icons/sl'
 import { GoComment } from 'react-icons/go'
 import { toast } from 'react-toastify'
 import withBaseComponent from 'hocs/withBaseComponent'
-import { getCurrent } from 'store/user/asyncActions'
 import Swal from 'sweetalert2'
 import path from 'ultils/path'
+import DOMPurify from 'dompurify'
 
 const DetailBlog = ({ dispatch, navigate, location }) => {
   const { category, bid } = useParams()
@@ -128,9 +128,14 @@ const DetailBlog = ({ dispatch, navigate, location }) => {
           <span className="text-3xl font-semibold  text-center my-8">
             {blogData?.caption}
           </span>
-          <span className="text-base text-gray-500 ">
-            {blogData?.description}
-          </span>
+          {blogData?.description?.length === 1 && (
+            <span
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(blogData?.description[0])
+              }}
+              className="text-base text-gray-500"
+            ></span>
+          )}
         </div>
         <div className="mt-7 flex items-center justify-center gap-10">
           <h2 className="font-medium w-[110px]  text-gray-500 mb-4 text-xl">

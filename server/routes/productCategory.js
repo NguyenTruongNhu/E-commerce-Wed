@@ -9,7 +9,7 @@ router.post(
   ctrls.createCategory
 );
 router.post("/brand", [verifyAccessToken, isAdmin], ctrls.createBrand);
-router.post(
+router.put(
   "/updateBrand/:pcid",
   [verifyAccessToken, isAdmin],
   ctrls.updateBrand
@@ -22,6 +22,17 @@ router.put(
   uploader.single("image"),
   ctrls.updateCategory
 );
+router.delete(
+  "/deleteOneBrand/:pcid",
+  [verifyAccessToken, isAdmin],
+  ctrls.deleteOneBrand
+);
+router.delete(
+  "/deleteAllBrand/:pcid",
+  [verifyAccessToken, isAdmin],
+  ctrls.deleteAllBrand
+);
+
 router.delete("/:pcid", [verifyAccessToken, isAdmin], ctrls.deleteCategory);
 
 module.exports = router;

@@ -35,8 +35,6 @@ const CustomizeVariant = ({
       price: customizeVariant?.price
     })
   }, [customizeVariant])
-  console.log(customizeVariant)
-
   const handleAddVariant = async (data) => {
     if (data.color === customizeVariant.color)
       Swal.fire('Oops!', 'Color not changed', 'info')

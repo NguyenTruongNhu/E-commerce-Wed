@@ -50,7 +50,6 @@ var productSchema = new mongoose.Schema(
       type: String,
       require: true,
     },
-
     ratings: [
       {
         star: {

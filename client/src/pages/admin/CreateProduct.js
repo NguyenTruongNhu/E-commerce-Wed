@@ -59,6 +59,7 @@ const CreateProduct = () => {
   }, [watch('images')])
 
   const handleCreateProduct = async (data) => {
+    window.scrollTo(0, 0)
     const invalids = validate(payload, setInvalidFields)
     if (invalids === 0) {
       if (data.category)
@@ -90,10 +91,11 @@ const CreateProduct = () => {
   }
 
   return (
-    <div className="w-full">
-      <h1 className="h-[75px] flex justify-between items-center text-3xl font-bold border-b px-4">
-        <span>Create New Product</span>
-      </h1>
+    <div className="w-full relative">
+      <div className="h-[69px] w-full"></div>
+      <div className="p-4 border-b flex bg-gray-100 justify-between items-center right-0 left-[327px] fixed top-0 z-10">
+        <h1 className="text-3xl font-bold tracking-tight">Create Product</h1>
+      </div>
       <div className="p-4">
         <form onSubmit={handleSubmit(handleCreateProduct)}>
           <InputForm

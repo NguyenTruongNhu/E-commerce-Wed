@@ -37,7 +37,7 @@ const ManageVariant = ({ navigate, location }) => {
   }
   const render = useCallback(() => {
     setUpdate(!update)
-  }, [])
+  }, [update])
   const queryDebounce = useDebounce(watch('q'), 800)
   useEffect(() => {
     if (queryDebounce) {
@@ -73,7 +73,7 @@ const ManageVariant = ({ navigate, location }) => {
   return (
     <div className="w-full relative px-4">
       {editVariant && (
-        <div className="absolute inset-0 min-h-screen bg-gray-100 z-50">
+        <div className="absolute inset-0 h-fit bg-gray-100 z-50">
           <UpdateVariant
             setEditVariant={setEditVariant}
             editVariant={editVariant}
