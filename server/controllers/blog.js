@@ -3,10 +3,11 @@ const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
 
 const createNewBlog = asyncHandler(async (req, res) => {
-  const { title, caption, description } = req.body;
+  const { title, caption, description, category } = req.body;
   const photo = req?.file?.path;
 
-  if (!title || !caption || !description) throw new Error("Missing inputs");
+  if (!title || !caption || !description || !category)
+    throw new Error("Missing inputs");
   req.body.slug = slugify(title);
   req.body.user = req.user._id;
   if (photo) req.body.photo = photo;

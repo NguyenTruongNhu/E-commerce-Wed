@@ -92,7 +92,7 @@ const updateCategory = asyncHandler(async (req, res) => {
   });
   return res.status(200).json({
     success: response ? true : false,
-    updatedCategory: response ? "Updated." : "Cannot updated product-category",
+    mes: response ? "Updated." : "Cannot updated product-category",
   });
 });
 

@@ -3,6 +3,7 @@ const ctrls = require("../controllers/blogCategory");
 const { verifyAccessToken, isAdmin } = require("../middlewares/verifyToken");
 
 router.post("/", [verifyAccessToken, isAdmin], ctrls.createCategory);
+router.get("/admin", [verifyAccessToken, isAdmin], ctrls.getCategoriesBlog);
 router.get("/", ctrls.getCategories);
 router.put("/:bcid", [verifyAccessToken, isAdmin], ctrls.updateCategory);
 router.delete("/:bcid", [verifyAccessToken, isAdmin], ctrls.deleteCategory);

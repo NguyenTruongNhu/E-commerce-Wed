@@ -37,9 +37,8 @@ const AllProduct = ({ setAllProduct, allProduct, render }) => {
   useEffect(() => {
     fetchAll()
   }, [])
-  console.log(DetailCus)
   return (
-    <div className="w-full  flex flex-col gap-4 relative p-4">
+    <div className="w-full flex flex-col gap-4 relative p-4">
       <div className="h-[69px] w-full"></div>
       <div className="p-4 border-b flex bg-gray-100 justify-between items-center right-0 left-[327px] fixed top-0">
         <h1 className="text-3xl font-bold tracking-tight">
@@ -53,6 +52,9 @@ const AllProduct = ({ setAllProduct, allProduct, render }) => {
         </span>
       </div>
       <div className="px-4"></div>
+      <h2 className="text-3xl font-semibold tracking-tight">
+        Existing products
+      </h2>
       <table className="table-auto ">
         <thead>
           <tr className="border bg-sky-900 text-white border-white ">
@@ -92,6 +94,9 @@ const AllProduct = ({ setAllProduct, allProduct, render }) => {
         </tbody>
       </table>
       <div className="px-4"></div>
+      <h2 className="text-3xl font-semibold tracking-tight">
+        Product Variants
+      </h2>
       <table className="table-auto ">
         <thead>
           <tr className="border bg-sky-900 text-white border-white ">
@@ -125,7 +130,11 @@ const AllProduct = ({ setAllProduct, allProduct, render }) => {
             ))}
         </tbody>
       </table>
+
       <div className="px-4"></div>
+      <h2 className="text-3xl font-semibold tracking-tight">
+        Product Custom from User
+      </h2>
       <table className="table-auto w-full">
         <thead>
           <tr className="border bg-sky-900 text-white border-white ">

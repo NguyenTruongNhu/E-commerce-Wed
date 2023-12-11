@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect } from 'react'
 import { InputForm, Select, Button, MartdownEditor, Loading } from 'components'
 import { useForm } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { validate, getBase64 } from 'ultils/helper'
 import { toast } from 'react-toastify'
 import { apiCreateBlog } from 'apis'
@@ -16,6 +16,7 @@ const CreateBlog = () => {
     watch,
     handleSubmit
   } = useForm()
+  const { categorriesBlog } = useSelector((state) => state.blogCate)
 
   const [payload, setPayload] = useState({
     description: ''
@@ -44,6 +45,10 @@ const CreateBlog = () => {
     window.scrollTo(0, 0)
     const invalids = validate(payload, setInvalidFields)
     if (invalids === 0) {
+      if (data.category)
+        data.category = categorriesBlog?.find(
+          (el) => el._id === data.category
+        )?.title
       const finalPayload = { ...data, ...payload }
       const formData = new FormData()
       for (let i of Object.entries(finalPayload)) formData.append(i[0], i[1])
@@ -64,7 +69,6 @@ const CreateBlog = () => {
       }
     }
   }
-
   return (
     <div className="w-full relative">
       <div className="h-[69px] w-full"></div>
@@ -98,20 +102,10 @@ const CreateBlog = () => {
               fullwidth
               placeholder="Caption of new blog"
             />
-            <InputForm
+
+            <Select
               label="Category"
-              register={register}
-              errors={errors}
-              id="category"
-              style="flex-auto"
-              validate={{
-                required: 'Need fill this field'
-              }}
-              fullwidth
-            />
-            {/* <Select
-              label="Category"
-              options={categories?.map((el) => ({
+              options={categorriesBlog?.map((el) => ({
                 code: el._id,
                 value: el.title
               }))}
@@ -123,7 +117,7 @@ const CreateBlog = () => {
               style="flex-auto"
               errors={errors}
               fullwidth
-            /> */}
+            />
           </div>
 
           <MartdownEditor

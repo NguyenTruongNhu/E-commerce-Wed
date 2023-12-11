@@ -27,7 +27,9 @@ import {
   ManageCategories,
   ManageBrand,
   CreateBrand,
-  CreateCategory
+  CreateCategory,
+  ManageCateBlog,
+  CreateCateBlog
 } from 'pages/admin'
 import {
   MemberLayout,
@@ -45,6 +47,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import { Cart, DetailBlog, Modal } from 'components'
 import { showCart } from 'store/app/appSlice'
 import { getNewBlogs } from 'store/blogs/asyncActions'
+import { getCateBlog } from 'store/blogCate/asyncAction'
 
 function App() {
   const dispatch = useDispatch()
@@ -53,6 +56,7 @@ function App() {
   )
   useEffect(() => {
     dispatch(getCategories())
+    dispatch(getCateBlog())
     dispatch(getNewBlogs())
   }, [])
 
@@ -91,7 +95,9 @@ function App() {
           <Route path={path.MANAGE_CATEGORY} element={<ManageCategories />} />
           <Route path={path.MANAGE_BRAND} element={<ManageBrand />} />
           <Route path={path.MANAGE_BLOGS} element={<ManageBlog />} />
+          <Route path={path.MANAGE_CATE_BLOG} element={<ManageCateBlog />} />
           <Route path={path.MANAGE_VARIANT} element={<ManageVariant />} />
+          <Route path={path.CREATE_CATE_BLOG} element={<CreateCateBlog />} />
           <Route path={path.CREATE_PRODUCT} element={<CreateProduct />} />
           <Route path={path.CREATE_BLOG} element={<CreateBlog />} />
           <Route path={path.CREATE_BRAND} element={<CreateBrand />} />

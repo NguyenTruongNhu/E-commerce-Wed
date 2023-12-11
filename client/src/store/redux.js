@@ -14,6 +14,7 @@ import {
   REGISTER
 } from 'redux-persist'
 import blogSlice from './blogs/blogSlice'
+import blogCateSlice from './blogCate/blogCateSlice'
 const comomConfig = {
   storage
 }
@@ -32,6 +33,8 @@ export const store = configureStore({
   reducer: {
     app: appSlice,
     blog: blogSlice,
+    blogCate: blogCateSlice,
+
     products: persistReducer(productConfig, productSlice),
     user: persistReducer(userConfig, userSlice)
   },

@@ -254,6 +254,22 @@ export const adminSidebar = [
   {
     id: 6,
     type: 'PARENT',
+    text: 'Manage Category Blog',
+    icon: <TbBrandProducthunt size={20} />,
+    submenu: [
+      {
+        text: 'Create Category Blog',
+        path: `/${path.ADMIN}/${path.CREATE_CATE_BLOG}`
+      },
+      {
+        text: 'Manage Category Blog',
+        path: `/${path.ADMIN}/${path.MANAGE_CATE_BLOG}`
+      }
+    ]
+  },
+  {
+    id: 7,
+    type: 'PARENT',
     text: 'Manage blogs',
     icon: <TbBrandProducthunt size={20} />,
     submenu: [
@@ -268,21 +284,21 @@ export const adminSidebar = [
     ]
   },
   {
-    id: 7,
+    id: 8,
     type: 'SINGLE',
     text: 'Manage orders',
     path: `/${path.ADMIN}/${path.MANAGE_ORDER}`,
     icon: <RiBillLine size={20} />
   },
   {
-    id: 8,
+    id: 9,
     type: 'SINGLE',
     text: 'Manage Custom Product',
     path: `/${path.ADMIN}/${path.MANAGE_CUSTOM_PRODUCT}`,
     icon: <RiBillLine size={20} />
   },
   {
-    id: 9,
+    id: 10,
     type: 'SINGLE',
     text: 'Manage Variant Product',
     path: `/${path.ADMIN}/${path.MANAGE_VARIANT}`,

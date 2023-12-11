@@ -26,6 +26,8 @@ const path = {
   MANAGE_ORDER: 'manage-order',
   MANAGE_VARIANT: 'manage-variant',
   MANAGE_CUSTOM_PRODUCT: 'manage-custom-product',
+  MANAGE_CATE_BLOG: 'managecate-blog',
+  CREATE_CATE_BLOG: 'create-cate-blog',
   CREATE_PRODUCT: 'create-product',
   CREATE_BLOG: 'create-blog',
   CREATE_CATEGORY: 'create-category',

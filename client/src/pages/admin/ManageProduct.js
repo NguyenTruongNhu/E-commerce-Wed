@@ -84,7 +84,7 @@ const ManageProduct = () => {
     })
   }
   return (
-    <div className="w-full  flex flex-col gap-4  relative">
+    <div className="w-full flex flex-col gap-4  relative">
       {editProduct && (
         <div className="absolute inset-0 h-fit bg-gray-100 z-50">
           <UpdateProduct
@@ -94,20 +94,21 @@ const ManageProduct = () => {
           />
         </div>
       )}
-      {allProduct && (
-        <div className="absolute inset-0 h-fit bg-gray-100 z-50">
-          <AllProduct
-            setAllProduct={setAllProduct}
-            allProduct={allProduct}
-            render={render}
-          />
-        </div>
-      )}
+
       {customizeVariant && (
         <div className="absolute inset-0 min-h-screen bg-gray-100 z-50">
           <CustomizeVariant
             setCustomizeVariant={setCustomizeVariant}
             customizeVariant={customizeVariant}
+            render={render}
+          />
+        </div>
+      )}
+      {allProduct && (
+        <div className="absolute inset-0 min-h-screen bg-gray-100 z-50">
+          <AllProduct
+            setAllProduct={setAllProduct}
+            allProduct={allProduct}
             render={render}
           />
         </div>

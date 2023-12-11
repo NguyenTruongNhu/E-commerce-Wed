@@ -25,7 +25,7 @@ const ManageBrand = ({ dispatch }) => {
   const { categories } = useSelector((state) => state.app)
   const render = useCallback(() => {
     setUpdate(!update)
-  }, [])
+  }, [update])
   useEffect(() => {
     dispatch(getCategories())
   }, [update])
