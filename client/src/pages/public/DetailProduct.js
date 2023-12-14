@@ -70,6 +70,7 @@ const DetailProduct = ({
     price: '',
     color: ''
   })
+  console.log(product)
   useEffect(() => {
     if (data) {
       setPid(data.pid)
@@ -213,7 +214,6 @@ const DetailProduct = ({
       dispatch(getCurrent())
     } else toast.error(response.mes)
   }
-  console.log(current)
   return (
     <div className={clsx('w-full')}>
       {!isQuickView && (

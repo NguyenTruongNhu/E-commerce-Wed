@@ -6,7 +6,9 @@ import { Congrat, InputForm, Paypal } from 'components'
 import { useForm } from 'react-hook-form'
 import withBaseComponent from 'hocs/withBaseComponent'
 import { getCurrent } from 'store/user/asyncActions'
-const Checkout = ({ dispatch, navigate }) => {
+import path from 'ultils/path'
+import { createSearchParams } from 'react-router-dom'
+const Checkout = ({ dispatch, navigate, location }) => {
   const { currentCart, current } = useSelector((state) => state.user)
 
   const [isSuccess, setIsSuccess] = useState(false)
@@ -14,6 +16,15 @@ const Checkout = ({ dispatch, navigate }) => {
   useEffect(() => {
     if (isSuccess) dispatch(getCurrent())
   }, [isSuccess])
+
+  const handleUpdateAddress = () => {
+    navigate({
+      pathname: `/${path.MEMBER}/${path.PERSONAL}`,
+      search: createSearchParams({
+        redirect: location.pathname
+      }).toString()
+    })
+  }
   return (
     <div className="p-8 w-full grid grid-cols-10 h-full max-h-screen overflow-y-auto gap-6">
       {isSuccess && <Congrat />}
@@ -56,9 +67,19 @@ const Checkout = ({ dispatch, navigate }) => {
                   )
                 )} VNĐ`}</span>
               </span>
-              <span className="flex items-center gap-8 text-sm">
-                <span className="font-medium">Address:</span>
-                <span className="text-main font-bold">{current?.address}</span>
+              <span className="flex gap-8 text-sm">
+                <span className="flex items-center gap-8 ">
+                  <span className="font-medium">Address:</span>
+                  <span className="text-main font-bold">
+                    {current?.address}
+                  </span>
+                </span>
+                <span
+                  className="text-sky-500 cursor-pointer hover:text-blue-900"
+                  onClick={handleUpdateAddress}
+                >
+                  Thay đổi
+                </span>
               </span>
             </div>
 
