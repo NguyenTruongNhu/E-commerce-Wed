@@ -120,7 +120,7 @@ const login = asyncHandler(async (req, res) => {
       userData,
     });
   } else {
-    throw new Error("Invalid credentials");
+    throw new Error("Please check your email and password again");
   }
 });
 

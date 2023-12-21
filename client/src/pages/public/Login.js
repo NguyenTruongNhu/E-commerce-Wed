@@ -41,7 +41,9 @@ const Login = () => {
   const [token, setToken] = useState('')
   const [email, setEmail] = useState('')
   const handleForgotPassword = async () => {
+    dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }))
     const response = await apiForgotPassword({ email })
+    dispatch(showModal({ isShowModal: false, modalChildren: null }))
     if (response.success) {
       toast.success(response.mes, { theme: 'colored' })
     } else {
@@ -66,7 +68,9 @@ const Login = () => {
           Swal.fire('Opps!', response.mes, 'error')
         }
       } else {
+        dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }))
         const rs = await apiLogin(data)
+        dispatch(showModal({ isShowModal: false, modalChildren: null }))
         if (rs.success) {
           dispatch(
             login({
@@ -125,7 +129,7 @@ const Login = () => {
         </div>
       )}
       {isForgotPassword && (
-        <div className="absolute animate-slice-right top-0 left-0 bottom-0 right-0 bg-white flex items-center  flex-col py-8 z-50">
+        <div className="absolute animate-slice-right top-0 left-0 bottom-0 right-0 bg-white flex items-center  flex-col py-8 z-10">
           <div className="flex flex-col gap-4">
             <label htmlFor="email">Enter your email:</label>
             <input

@@ -214,6 +214,8 @@ const DetailProduct = ({
       dispatch(getCurrent())
     } else toast.error(response.mes)
   }
+  console.log({ currentImage, currentProduct })
+
   return (
     <div className={clsx('w-full')}>
       {!isQuickView && (
@@ -247,10 +249,10 @@ const DetailProduct = ({
                 smallImage: {
                   alt: 'Wristwatch by Ted Baker London',
                   isFluidWidth: true,
-                  src: currentImage
+                  src: currentProduct.thumb
                 },
                 largeImage: {
-                  src: currentImage,
+                  src: currentProduct.thumb,
                   width: 1000,
                   height: 1000
                 }
