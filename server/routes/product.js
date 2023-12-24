@@ -31,6 +31,12 @@ router.put(
   ctrls.updateVariant
 );
 router.put(
+  "/updateQuantityVariant/:pid",
+  [verifyAccessToken, isAdmin],
+
+  ctrls.updateQuanityVariant
+);
+router.put(
   "/variant/:pid",
   [verifyAccessToken, isAdmin],
   uploader.fields([
@@ -38,6 +44,17 @@ router.put(
     { name: "thumb", maxCount: 1 },
   ]),
   ctrls.addVariant
+);
+
+router.delete(
+  "/deleteVariant/:pid/:vid/:color",
+  [verifyAccessToken, isAdmin],
+  ctrls.deletaVariant
+);
+router.put(
+  "/quantityProduct/:pid",
+  [verifyAccessToken, isAdmin],
+  ctrls.updateQuantityProduct
 );
 
 router.put(
@@ -50,11 +67,6 @@ router.put(
   ctrls.updateProduct
 );
 
-router.delete(
-  "/deleteVariant/:pid/:vid/:color",
-  [verifyAccessToken, isAdmin],
-  ctrls.deletaVariant
-);
 router.delete("/:pid", [verifyAccessToken, isAdmin], ctrls.deleteProduct);
 router.get("/:pid", ctrls.getProduct);
 module.exports = router;

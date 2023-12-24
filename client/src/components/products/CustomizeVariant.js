@@ -87,7 +87,7 @@ const CustomizeVariant = ({
     }
   }, [watch('images')])
   return (
-    <div className="w-full  flex flex-col gap-4 relative">
+    <div className="w-full h-[100%]  flex flex-col gap-4 relative">
       <div className="h-[69px] w-full"></div>
       <div className="p-4 border-b flex bg-gray-100 justify-between items-center right-0 left-[327px] fixed top-0">
         <h1 className="text-3xl font-bold tracking-tight">
@@ -143,6 +143,19 @@ const CustomizeVariant = ({
             }}
             fullwidth
             placeholder="Color of new variant"
+            style="flex-auto"
+          />
+          <InputForm
+            label="Quantity variant"
+            register={register}
+            errors={errors}
+            id="quantity"
+            validate={{
+              required: 'Need fill this field'
+            }}
+            fullwidth
+            placeholder="Quantity of new variant"
+            type="number"
             style="flex-auto"
           />
         </div>

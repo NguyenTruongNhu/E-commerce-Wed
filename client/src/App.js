@@ -29,7 +29,9 @@ import {
   CreateBrand,
   CreateCategory,
   ManageCateBlog,
-  CreateCateBlog
+  CreateCateBlog,
+  ManageInventory,
+  ManageInventoryVariant
 } from 'pages/admin'
 import {
   MemberLayout,
@@ -98,6 +100,11 @@ function App() {
             <Route path={path.MANAGE_BLOGS} element={<ManageBlog />} />
             <Route path={path.MANAGE_CATE_BLOG} element={<ManageCateBlog />} />
             <Route path={path.MANAGE_VARIANT} element={<ManageVariant />} />
+            <Route path={path.MANAGE_INVENTORY} element={<ManageInventory />} />
+            <Route
+              path={path.MANAGE_INVENTORY_VARIANT}
+              element={<ManageInventoryVariant />}
+            />
             <Route path={path.CREATE_CATE_BLOG} element={<CreateCateBlog />} />
             <Route path={path.CREATE_PRODUCT} element={<CreateProduct />} />
             <Route path={path.CREATE_BLOG} element={<CreateBlog />} />

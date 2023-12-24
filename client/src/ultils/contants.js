@@ -303,6 +303,23 @@ export const adminSidebar = [
     text: 'Manage Variant Product',
     path: `/${path.ADMIN}/${path.MANAGE_VARIANT}`,
     icon: <RiBillLine size={20} />
+  },
+  {
+    id: 11,
+    type: 'PARENT',
+    text: 'Manage Inventory Product',
+    path: `/${path.ADMIN}/${path.MANAGE_INVENTORY}`,
+    icon: <RiBillLine size={20} />,
+    submenu: [
+      {
+        text: 'Manage Inventory',
+        path: `/${path.ADMIN}/${path.MANAGE_INVENTORY}`
+      },
+      {
+        text: 'Manage Inventory Variant',
+        path: `/${path.ADMIN}/${path.MANAGE_INVENTORY_VARIANT}`
+      }
+    ]
   }
 ]
 

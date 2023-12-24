@@ -1,22 +1,18 @@
-import { apiDeleteVariant, apiGetProducts } from 'apis'
+import { apiGetProducts } from 'apis'
 import { InputForm } from 'components'
 import withBaseComponent from 'hocs/withBaseComponent'
 import useDebounce from 'hooks/useDebounce'
 import moment from 'moment'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { BiEdit } from 'react-icons/bi'
 import { createSearchParams, useSearchParams } from 'react-router-dom'
-import icons from 'ultils/icons'
-import UpdateVariant from './UpdateVariant'
-import Swal from 'sweetalert2'
-import { toast } from 'react-toastify'
+import UpdateQuantityVariant from './UpdateQuantityVariant'
 
-const { BiEdit, RiDeleteBin6Line } = icons
-
-const ManageVariant = ({ navigate, location }) => {
+const ManageInventoryVariant = ({ navigate, location }) => {
   const [variants, setVariants] = useState(null)
-  const [editVariant, setEditVariant] = useState(null)
   const [update, setUpdate] = useState(false)
+  const [editQuantityVariant, setEditQuantityVariant] = useState(null)
   const [params] = useSearchParams()
   const {
     register,
@@ -55,34 +51,19 @@ const ManageVariant = ({ navigate, location }) => {
     fetchVariant(pr)
   }, [params, update])
 
-  const handleDeleteVariant = (vid, pid, color) => {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'Are you sure remove this variant',
-      icon: 'warning',
-      showCancelButton: true
-    }).then(async (rs) => {
-      if (rs.isConfirmed) {
-        const response = await apiDeleteVariant(pid, vid, color)
-        if (response.success) toast.success(response.mes)
-        else toast.error(response.mes)
-        render()
-      }
-    })
-  }
   return (
     <div className="w-full relative px-4">
-      {editVariant && (
-        <div className="absolute inset-0 h-fit bg-gray-100 z-20">
-          <UpdateVariant
-            setEditVariant={setEditVariant}
-            editVariant={editVariant}
+      {editQuantityVariant && (
+        <div className="absolute inset-0 min-h-screen bg-gray-100 z-20">
+          <UpdateQuantityVariant
+            setEditQuantityVariant={setEditQuantityVariant}
+            editQuantityVariant={editQuantityVariant}
             render={render}
           />
         </div>
       )}
       <header className="text-3xl font-semibold py-4 border-b border-b-blue-200">
-        Manage Variant
+        Manage Quantity Product Variant
       </header>
       <div className="flex w-full justify-end items-center px-4">
         <form className="w-[45%]">
@@ -101,9 +82,7 @@ const ManageVariant = ({ navigate, location }) => {
             <th className="text-center py-2">Thumb</th>
             <th className="text-center py-2">Title</th>
             <th className="text-center py-2">Color</th>
-            <th className="text-center py-2">Price</th>
             <th className="text-center py-2">Quantity</th>
-            <th className="text-center py-2">Sold</th>
             <th className="text-center py-2">Updated At</th>
             <th className="text-center py-2">Action</th>
           </tr>
@@ -123,27 +102,17 @@ const ManageVariant = ({ navigate, location }) => {
 
                   <td className="text-center py-2">{el.title}</td>
                   <td className="text-center py-2">{el.color}</td>
-                  <td className="text-center py-2">{el.price}</td>
                   <td className="text-center py-2">{el.quantity}</td>
-                  <td className="text-center py-2">{el.sold}</td>
 
                   <td className="text-center py-2">
                     {moment(el.updatedAt)?.format('DD/MM/YYYY')}
                   </td>
                   <td className="text-center py-2">
                     <span
-                      onClick={() => setEditVariant(el)}
+                      onClick={() => setEditQuantityVariant(el)}
                       className="text-blue-500 hover:text-orange-500 hover:underline inline-block cursor-pointer px-1"
                     >
                       <BiEdit size={20} />
-                    </span>
-                    <span
-                      onClick={() =>
-                        handleDeleteVariant(el._id, el.proId, el.color)
-                      }
-                      className="text-blue-500 hover:text-orange-500 hover:underline inline-block cursor-pointer px-1"
-                    >
-                      <RiDeleteBin6Line size={20} />
                     </span>
                   </td>
                 </tr>
@@ -155,4 +124,4 @@ const ManageVariant = ({ navigate, location }) => {
   )
 }
 
-export default withBaseComponent(ManageVariant)
+export default withBaseComponent(ManageInventoryVariant)

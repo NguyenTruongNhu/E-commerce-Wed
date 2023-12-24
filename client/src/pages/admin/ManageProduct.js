@@ -86,7 +86,7 @@ const ManageProduct = () => {
   return (
     <div className="w-full flex flex-col gap-4  relative">
       {editProduct && (
-        <div className="absolute inset-0 h-fit bg-gray-100 z-50">
+        <div className="absolute inset-0 h-fit bg-gray-100 z-20">
           <UpdateProduct
             setEditProduct={setEditProduct}
             editProduct={editProduct}
@@ -96,7 +96,7 @@ const ManageProduct = () => {
       )}
 
       {customizeVariant && (
-        <div className="absolute inset-0 min-h-screen bg-gray-100 z-50">
+        <div className="absolute inset-0 min-h-screen bg-gray-100 z-20">
           <CustomizeVariant
             setCustomizeVariant={setCustomizeVariant}
             customizeVariant={customizeVariant}

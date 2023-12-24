@@ -203,10 +203,10 @@ const uploadImagesProduct = asyncHandler(async (req, res) => {
 });
 const addVariant = asyncHandler(async (req, res) => {
   const { pid } = req.params;
-  const { title, price, color, proId } = req.body;
+  const { title, price, color, proId, quantity } = req.body;
   const thumb = req?.files?.thumb[0]?.path;
   const images = req.files?.images?.map((el) => el.path);
-  if (!(title && price && color)) throw new Error("Missing inputs");
+  if (!(title && price && color && quantity)) throw new Error("Missing inputs");
   const response = await Product.findByIdAndUpdate(
     pid,
     {
@@ -219,6 +219,7 @@ const addVariant = asyncHandler(async (req, res) => {
           images,
           sku: makeSku().toUpperCase(),
           proId: pid,
+          quantity,
         },
       },
     },
@@ -232,11 +233,10 @@ const addVariant = asyncHandler(async (req, res) => {
 
 const updateVariant = asyncHandler(async (req, res) => {
   const { pid } = req.params;
-  const { sku, title, color, price } = req.body;
-
+  const { sku, title, color, price, quantity } = req.body;
   const thumb = req?.files?.thumb[0]?.path;
   const images = req.files?.images?.map((el) => el.path);
-  const variantProduct = await Product.findById(pid);
+  const variantProduct = await Product.findById(pid).select("variants");
   const alreadyVariant = variantProduct?.variants?.find(
     (el) => el.sku.toString() === sku
   );
@@ -247,11 +247,37 @@ const updateVariant = asyncHandler(async (req, res) => {
       },
       {
         $set: {
-          "variants.$.title": title,
+          "variants.$.quantity": quantity,
           "variants.$.color": color,
           "variants.$.price": price,
           "variants.$.thumb": thumb,
           "variants.$.images": images,
+          "variants.$.title": title,
+        },
+      },
+      { new: true }
+    );
+    return res.status(200).json({
+      success: response ? true : false,
+      mes: response ? "Successfully" : "Something went wrong",
+    });
+  }
+});
+const updateQuanityVariant = asyncHandler(async (req, res) => {
+  const { pid } = req.params;
+  const { sku, quantity } = req.body;
+  const variantProduct = await Product.findById(pid).select("variants");
+  const alreadyVariant = variantProduct?.variants?.find(
+    (el) => el.sku.toString() === sku
+  );
+  if (alreadyVariant) {
+    const response = await Product.updateOne(
+      {
+        variants: { $elemMatch: alreadyVariant },
+      },
+      {
+        $set: {
+          "variants.$.quantity": quantity,
         },
       },
       { new: true }
@@ -285,6 +311,19 @@ const deletaVariant = asyncHandler(async (req, res) => {
     });
   }
 });
+const updateQuantityProduct = asyncHandler(async (req, res) => {
+  const { pid } = req.params;
+  const { quantity } = req.body;
+  if (!quantity) throw new Error("Missing inputs");
+  const product = await Product.findById(pid);
+  product.quantity = quantity;
+  const response = await Product.findByIdAndUpdate(pid, product, { new: true });
+  return res.status(200).json({
+    success: response ? true : false,
+    mes: response ? "Successfully" : "Something went wrong",
+  });
+});
+
 module.exports = {
   createProduct,
   getProduct,
@@ -296,4 +335,6 @@ module.exports = {
   addVariant,
   updateVariant,
   deletaVariant,
+  updateQuantityProduct,
+  updateQuanityVariant,
 };

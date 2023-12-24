@@ -35,6 +35,12 @@ export const apiUpdateVariant = (data, pid) =>
     method: 'put',
     data
   })
+export const apiUpdateQuantityVariant = (data, pid) =>
+  axios({
+    url: '/product/updateQuantityVariant/' + pid,
+    method: 'put',
+    data
+  })
 export const apiDeleteProduct = (pid) =>
   axios({
     url: '/product/' + pid,
@@ -68,4 +74,10 @@ export const apiGetUserOrders = (params) =>
     url: '/order/',
     method: 'get',
     params
+  })
+export const apiUpdateQuantityProduct = (data, pid) =>
+  axios({
+    url: '/product/quantityProduct/' + pid,
+    method: 'put',
+    data
   })

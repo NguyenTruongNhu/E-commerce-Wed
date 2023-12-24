@@ -26,6 +26,7 @@ const UpdateVariant = ({ setEditVariant, editVariant, render }) => {
       title: editVariant?.title,
       color: editVariant?.color,
       price: editVariant?.price,
+      quantity: editVariant?.quantity,
       sku: editVariant?.sku
     })
     setPreview({
@@ -149,6 +150,19 @@ const UpdateVariant = ({ setEditVariant, editVariant, render }) => {
             }}
             fullwidth
             placeholder="Color of new variant"
+            style="flex-auto"
+          />
+          <InputForm
+            label="Quantity variant"
+            register={register}
+            errors={errors}
+            id="quantity"
+            validate={{
+              required: 'Need fill this field'
+            }}
+            fullwidth
+            placeholder="Quantity of new variant"
+            type="number"
             style="flex-auto"
           />
         </div>

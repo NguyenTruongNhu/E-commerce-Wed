@@ -80,6 +80,14 @@ var productSchema = new mongoose.Schema(
         title: String,
         sku: String,
         proId: String,
+        quantity: {
+          type: Number,
+          default: 0,
+        },
+        sold: {
+          type: Number,
+          default: 0,
+        },
       },
     ],
   },
